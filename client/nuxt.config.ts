@@ -1,5 +1,6 @@
+import { Configuration } from '@nuxt/types'
 
-export default {
+const config: Configuration = {
   mode: 'universal',
   srcDir: 'src/',
   /*
@@ -9,7 +10,7 @@ export default {
     title: process.env.npm_package_name || '',
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { name: 'viewport', content: 'width=device-width, user-scalable=no' },
       { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
     ],
     link: [
@@ -48,7 +49,11 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv'
+    '@nuxtjs/dotenv',
+    // Doc: https://www.npmjs.com/package/@nuxtjs/style-resources
+    '@nuxtjs/style-resources',
+    // Doc: https://www.npmjs.com/package/nuxt-fontawesome
+    'nuxt-fontawesome'
   ],
   /*
   ** Axios module configuration
@@ -56,8 +61,25 @@ export default {
   */
   axios: {
   },
+  /*
+  ** Dotenv
+  */
   dotenv: {
     path: process.cwd()
+  },
+  /*
+  ** style-resources
+  */
+  styleResources: {
+    scss: [
+      '@/assets/scss/vars.scss'
+    ]
+  },
+  /*
+  ** FontAwesome
+  */
+  fontawesome: {
+    component: 'fa'
   },
   /*
   ** Build configuration
@@ -69,18 +91,24 @@ export default {
     extend (config, ctx) {
       // Run ESLint on save
       if (ctx.isDev && ctx.isClient) {
-        config.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /(node_modules)/
-        })
+        if (config.module) {
+          config.module.rules.push({
+            enforce: 'pre',
+            test: /\.(js|vue)$/,
+            loader: 'eslint-loader',
+            exclude: /(node_modules)/
+          })
+        }
       }
     }
   },
+  /*
+  ** TypeScript configuration
+  */
   typescript: {
     typeCheck: {
       eslint: true
     }
   }
 }
+export default config
