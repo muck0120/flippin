@@ -67,10 +67,11 @@ textarea {
   font: inherit;
   outline: none;
   line-height: normal;
+  cursor: pointer;
 }
 
 textarea {
-  resize: vertical;
+  resize: none;
 }
 
 input[type='checkbox'],

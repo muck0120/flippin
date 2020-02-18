@@ -1,44 +1,50 @@
 <template>
   <div :class="$style.wrap">
     <h2 :class="$style.title">
-      設定
+      新しく問題集を作成する
     </h2>
     <div :class="$style.group">
       <p :class="$style.heading">
-        <span>ユーザー名</span>
+        <span>タイトル（必須）</span>
         <span
           :class="[
             $style.counter,
             { [$style.error]: false }
           ]"
-        >13/20</span>
+        >13/50</span>
       </p>
       <input
         type="text"
-        placeholder="20文字以内で入力してください"
-        :class="[$style.form, { [$style.error]: false }]"
+        placeholder="50文字以内で入力してください"
+        :class="[
+          $style.form,
+          { [$style.error]: false }
+        ]"
       >
     </div>
     <div :class="$style.group">
       <p :class="$style.heading">
-        メールアドレス
+        <span>説明文</span>
+        <span
+          :class="[
+            $style.counter,
+            { [$style.error]: false }
+          ]"
+        >13/200</span>
       </p>
-      <input
-        type="text"
-        placeholder="メールアドレス"
-        :class="[$style.form, { [$style.error]: false }]"
-      >
+      <textarea
+        placeholder="200文字以内で入力してください"
+        :class="[
+          $style.form,
+          $style.textarea,
+          { [$style.error]: false }
+        ]"
+      />
     </div>
-    <div :class="$style.group">
-      <p :class="$style.heading">
-        パスワード
-      </p>
-      <input
-        type="text"
-        placeholder="パスワード"
-        :class="[$style.form, { [$style.error]: false }]"
-      >
-    </div>
+    <label :class="$style.checklabel">
+      <input type="checkbox" :class="$style.checkbox">
+      <span :class="$style.checktext">この問題集を公開する</span>
+    </label>
     <div :class="$style.buttons">
       <button
         :class="[
@@ -47,7 +53,7 @@
           { [$style.disabled]: false }
         ]"
       >
-        変更する
+        新規作成
       </button>
       <button :class="$style.button">
         キャンセル
@@ -148,6 +154,77 @@
 
 .form::placeholder {
   color: #999;
+}
+
+.form.textarea {
+  height: 120px;
+}
+
+.checklabel {
+  display: inline-block;
+  margin-top: 30px;
+
+  @include mq(tb) {
+    margin-top: 25px;
+  }
+
+  @include mq(sp) {
+    margin-top: 20px;
+  }
+}
+
+.checktext {
+  padding-left: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  position: relative;
+  transition: all 0.3s;
+
+  @include mq(tb) {
+    padding-left: 27px;
+    font-size: 16px;
+  }
+
+  @include mq(sp) {
+    padding-left: 24px;
+    font-size: 14px;
+  }
+}
+
+.checktext::before {
+  $square-pc: 25px;
+  $square-tb: 22px;
+  $square-sp: 19px;
+
+  content: '';
+  display: block;
+  width: $square-pc;
+  height: $square-pc;
+  position: absolute;
+  top: calc(50% - #{$square-pc} / 2);
+  left: 0;
+  background-image: url('~assets/images/check-off.svg');
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  transition: all 0.3s;
+
+  @include mq(tb) {
+    width: $square-tb;
+    height: $square-tb;
+    top: calc(50% - #{$square-tb} / 2);
+  }
+
+  @include mq(sp) {
+    width: $square-sp;
+    height: $square-sp;
+    top: calc(50% - #{$square-sp} / 2);
+  }
+}
+
+.checkbox:checked + .checktext::before {
+  background-image: url('~assets/images/check-on.svg');
+  transition: all 0.3s;
 }
 
 .buttons {

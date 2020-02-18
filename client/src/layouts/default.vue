@@ -42,7 +42,7 @@ $header-height-sp: 50px;
   width: 1000px;
   min-height: calc(100% - #{$header-height-pc});
   margin: 0 auto;
-  padding: 50px 0;
+  padding: 50px 0 100px;
   display: flex;
   justify-content: flex-start;
   align-items: stretch;
