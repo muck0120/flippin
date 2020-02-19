@@ -142,11 +142,23 @@
 }
 
 .favorite {
+  padding-left: 20px;
   font-weight: bold;
   white-space: nowrap;
   color: #999;
   position: relative;
   transition: all 0.3s;
+  cursor: pointer;
+
+  @include mq(tb) {
+    padding-left: 23px;
+    font-size: 14px;
+  }
+
+  @include mq(sp) {
+    padding-left: 18px;
+    font-size: 12px;
+  }
 }
 
 .favorite::before {
@@ -160,7 +172,7 @@
   height: $square-pc;
   position: absolute;
   top: calc(50% - #{$square-pc} / 2);
-  left: -20px;
+  left: 0;
   background-image: url('~assets/images/heart-empty-gray.svg');
   background-repeat: no-repeat;
   background-size: contain;
