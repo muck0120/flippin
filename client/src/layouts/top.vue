@@ -1,7 +1,7 @@
 <template>
   <div>
     <header :class="$style.header">
-      <Header />
+      <HeaderApp />
     </header>
     <section :class="[$style.content, $style.green]">
       <div :class="$style.content__inner">
@@ -9,20 +9,20 @@
       </div>
     </section>
     <footer :class="$style.footer">
-      <Footer />
+      <FooterApp />
     </footer>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import Header from '@/components/TheHeader.vue'
-import Footer from '@/components/TheFooter.vue'
+import HeaderApp from '@/components/TheHeaderApp.vue'
+import FooterApp from '@/components/TheFooterApp.vue'
 
 export default Vue.extend({
   components: {
-    Header,
-    Footer
+    HeaderApp,
+    FooterApp
   }
 })
 </script>

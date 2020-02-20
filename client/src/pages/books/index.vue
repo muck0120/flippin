@@ -20,7 +20,7 @@
     <div :class="$style.books">
       <template v-if="true">
         <div v-for="n in 12" :key="n" :class="$style.card">
-          <Book />
+          <ListBook />
         </div>
       </template>
       <template v-if="false">
@@ -40,13 +40,13 @@
 <script lang="ts">
 import Vue from 'vue'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import Book from '@/components/ItemBook.vue'
+import ListBook from '@/components/ListBook.vue'
 import NoBook from '@/components/TheNoBook.vue'
 import NoFavorite from '@/components/TheNoFavorite.vue'
 
 export default Vue.extend({
   components: {
-    Book,
+    ListBook,
     NoBook,
     NoFavorite
   },

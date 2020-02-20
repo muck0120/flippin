@@ -1,6 +1,12 @@
 <template>
   <div :class="$style.wrap">
-    <BookHeading @open="modal = true" />
+    <HeaderBook
+      title="AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1"
+      desc="ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。"
+      :is-footer="true"
+      back-to="/books"
+      @open="modal = true"
+    />
     <div :class="$style.cards">
       <!-- 問題がある場合 -->
       <template v-if="true">
@@ -9,10 +15,13 @@
           :key="n"
           :class="$style.card"
         >
-          <div v-if="true" :class="$style.sort">
+          <div
+            v-if="true"
+            :class="$style.sort"
+          >
             <fa :icon="faSort" />
           </div>
-          <Card />
+          <ListCard />
         </div>
       </template>
       <!-- 問題がない場合 -->
@@ -20,7 +29,10 @@
         <NoCard />
       </template>
     </div>
-    <div v-if="false" :class="$style.buttons">
+    <div
+      v-if="false"
+      :class="$style.buttons"
+    >
       <button :class="[$style.button, $style.red]">
         問題を解く
         <img
@@ -31,10 +43,16 @@
       </button>
       <button :class="$style.button">
         問題を追加する
-        <fa :icon="faPlus" :class="$style.icon" />
+        <fa
+          :icon="faPlus"
+          :class="$style.icon"
+        />
       </button>
     </div>
-    <Modal v-if="modal" @close="modal = false" />
+    <Modal
+      v-if="modal"
+      @close="modal = false"
+    />
   </div>
 </template>
 
@@ -42,17 +60,17 @@
 import Vue from 'vue'
 import { faPlus, faSort } from '@fortawesome/free-solid-svg-icons'
 
-import BookHeading from '@/components/TheHeadingBook.vue'
+import HeaderBook from '@/components/TheHeaderBook.vue'
 import NoCard from '@/components/TheNoCard.vue'
 import Modal from '@/components/TheModal.vue'
-import Card from '@/components/ItemCard.vue'
+import ListCard from '@/components/ListCard.vue'
 
 export default Vue.extend({
   components: {
-    BookHeading,
+    HeaderBook,
     NoCard,
     Modal,
-    Card
+    ListCard
   },
   data () {
     return {

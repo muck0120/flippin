@@ -2,12 +2,18 @@
   <div>
     <section :class="$style.wrap">
       <h2 :class="$style.title">
-        AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1
+        {{ title }}
       </h2>
-      <p :class="$style.desc">
-        ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。
+      <p
+        v-if="desc"
+        :class="$style.desc"
+      >
+        {{ desc }}
       </p>
-      <div :class="$style.footer">
+      <div
+        v-if="isFooter"
+        :class="$style.footer"
+      >
         <div :class="[$style.favorite, { [$style.active]: false }]">
           130いいね
         </div>
@@ -22,17 +28,33 @@
               <span v-if="true">公開</span>
               <span v-if="false">非公開</span>
             </div>
-            <NLink :to="`/books/${1}/update`" :class="$style.operate">
-              <fa :icon="faEdit" :class="$style.icon" />
+            <NLink
+              :to="`/books/${1}/update`"
+              :class="$style.operate"
+            >
+              <fa
+                :icon="faEdit"
+                :class="$style.icon"
+              />
             </NLink>
-            <div :class="$style.operate" @click="$emit('open')">
-              <fa :icon="faTrash" :class="$style.icon" />
+            <div
+              :class="$style.operate"
+              @click="$emit('open')"
+            >
+              <fa
+                :icon="faTrash"
+                :class="$style.icon"
+              />
             </div>
           </div>
         </template>
       </div>
     </section>
-    <NLink to="/books" :class="$style.back">
+    <NLink
+      v-if="backTo"
+      :to="backTo"
+      :class="$style.back"
+    >
       一覧へ戻る
     </NLink>
   </div>
@@ -43,6 +65,26 @@ import Vue from 'vue'
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 export default Vue.extend({
+  props: {
+    title: {
+      type: String,
+      required: true
+    },
+    desc: {
+      type: String,
+      default: '',
+      required: false
+    },
+    isFooter: {
+      type: Boolean,
+      required: true
+    },
+    backTo: {
+      type: String,
+      default: '',
+      required: false
+    }
+  },
   computed: {
     faEdit () {
       return faEdit

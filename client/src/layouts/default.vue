@@ -1,7 +1,7 @@
 <template>
   <div>
     <header :class="$style.header">
-      <Header />
+      <HeaderApp />
     </header>
     <section :class="$style.content">
       <nuxt />
@@ -11,11 +11,11 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import Header from '@/components/TheHeader.vue'
+import HeaderApp from '@/components/TheHeaderApp.vue'
 
 export default Vue.extend({
   components: {
-    Header
+    HeaderApp
   }
 })
 </script>
