@@ -36,19 +36,19 @@ export default Vue.extend({
     }
   },
   methods: {
-    accordionToggle () {
+    accordionToggle (): void {
       this.isOpen = !this.isOpen
     },
-    beforeEnter (el) {
+    beforeEnter (el: HTMLElement): void {
       el.style.height = '0'
     },
-    enter (el) {
+    enter (el: HTMLElement): void {
       el.style.height = el.scrollHeight + 'px'
     },
-    beforeLeave (el) {
+    beforeLeave (el: HTMLElement): void {
       el.style.height = el.scrollHeight + 'px'
     },
-    leave (el) {
+    leave (el: HTMLElement): void {
       el.style.height = '0'
     }
   }
