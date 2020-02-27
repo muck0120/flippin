@@ -13,6 +13,15 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/login', 'UserController@login');
+Route::post('/users/user', 'UserController@createUser');
+
+Route::middleware(['auth:api'])->group(function () {
+    Route::get('/logout', 'UserController@logout');
+    Route::get('/users/profile', 'UserController@getProfile');
+    Route::put('/users/profile', 'UserController@updateProfile');
+});
+
+Route::get('/unauthorized', function () {
+    return response()->json(['message' => 'Unauthorized.'], 401);
 });
