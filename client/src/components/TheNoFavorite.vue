@@ -22,17 +22,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import { faLongArrowAltRight } from '@fortawesome/free-solid-svg-icons'
 
-export default Vue.extend({
+export default {
   computed: {
     faLongArrowAltRight () {
       return faLongArrowAltRight
     }
   }
-})
+}
 </script>
 
 <style lang="scss" module>

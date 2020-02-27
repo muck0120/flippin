@@ -1,6 +1,4 @@
-import { Configuration } from '@nuxt/types'
-
-const config: Configuration = {
+export default {
   mode: 'universal',
   srcDir: 'src/',
   /*
@@ -8,6 +6,7 @@ const config: Configuration = {
   */
   head: {
     title: process.env.npm_package_name || '',
+    titleTemplate: '%s | Flippin',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, user-scalable=no' },
@@ -39,8 +38,7 @@ const config: Configuration = {
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
-    '@nuxtjs/stylelint-module',
-    '@nuxt/typescript-build'
+    '@nuxtjs/stylelint-module'
   ],
   /*
   ** Nuxt.js modules
@@ -101,14 +99,5 @@ const config: Configuration = {
         }
       }
     }
-  },
-  /*
-  ** TypeScript configuration
-  */
-  typescript: {
-    typeCheck: {
-      eslint: true
-    }
   }
 }
-export default config

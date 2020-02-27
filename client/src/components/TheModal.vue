@@ -22,17 +22,15 @@
   </transition>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-
-export default Vue.extend({
+<script>
+export default {
   mounted () {
     document.body.classList.add('prevent-scroll')
   },
   destroyed () {
     document.body.classList.remove('prevent-scroll')
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>

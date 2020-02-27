@@ -14,17 +14,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import HeaderApp from '@/components/TheHeaderApp.vue'
 import FooterApp from '@/components/TheFooterApp.vue'
 
-export default Vue.extend({
+export default {
   components: {
     HeaderApp,
     FooterApp
   }
-})
+}
 </script>
 
 <style lang="scss" module>

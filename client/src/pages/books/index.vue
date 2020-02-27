@@ -37,14 +37,13 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import ListBook from '@/components/ListBook.vue'
 import NoBook from '@/components/TheNoBook.vue'
 import NoFavorite from '@/components/TheNoFavorite.vue'
 
-export default Vue.extend({
+export default {
   components: {
     ListBook,
     NoBook,
@@ -55,7 +54,7 @@ export default Vue.extend({
       return faPlus
     }
   }
-})
+}
 </script>
 
 <style lang="scss" module>

@@ -25,11 +25,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 
-export default Vue.extend({
+export default {
   data () {
     return {
       isLoggedIn: false
@@ -40,7 +39,7 @@ export default Vue.extend({
       return faUser
     }
   }
-})
+}
 </script>
 
 <style lang="scss" module>

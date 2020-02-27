@@ -116,11 +116,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
 
-export default Vue.extend({
+export default {
   computed: {
     faTrash () {
       return faTrash
@@ -129,7 +128,7 @@ export default Vue.extend({
       return faPlus
     }
   }
-})
+}
 </script>
 
 <style lang="scss" module>

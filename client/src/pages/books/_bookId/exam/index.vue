@@ -30,16 +30,14 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-
+<script>
 import HeaderBook from '@/components/TheHeaderBook.vue'
 
-export default Vue.extend({
+export default {
   components: {
     HeaderBook
   }
-})
+}
 </script>
 
 <style lang="scss" module>

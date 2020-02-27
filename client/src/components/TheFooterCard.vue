@@ -20,15 +20,14 @@
   </Accordion>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-
+<script>
 import Accordion from '@/components/Accordion.vue'
-export default Vue.extend({
+
+export default {
   components: {
     Accordion
   }
-})
+}
 </script>
 
 <style lang="scss" module>

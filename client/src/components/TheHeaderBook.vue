@@ -60,11 +60,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 
-export default Vue.extend({
+export default {
   props: {
     title: {
       type: String,
@@ -93,7 +92,7 @@ export default Vue.extend({
       return faTrash
     }
   }
-})
+}
 </script>
 
 <style lang="scss" module>

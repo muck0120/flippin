@@ -49,18 +49,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-
+<script>
 import HeaderBook from '@/components/TheHeaderBook.vue'
 import ListCard from '@/components/ListCard.vue'
 
-export default Vue.extend({
+export default {
   components: {
     HeaderBook,
     ListCard
   }
-})
+}
 </script>
 
 <style lang="scss" module>

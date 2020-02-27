@@ -2,13 +2,12 @@
   <FormBook />
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import FormBook from '@/components/TheFormBook.vue'
 
-export default Vue.extend({
+export default {
   components: {
     FormBook
   }
-})
+}
 </script>

@@ -9,18 +9,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-
+<script>
 import HeaderBook from '@/components/TheHeaderBook.vue'
 import FormCard from '@/components/TheFormCard.vue'
 
-export default Vue.extend({
+export default {
   components: {
     HeaderBook,
     FormCard
   }
-})
+}
 </script>
 
 <style lang="scss" module>

@@ -11,11 +11,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import { faCopyright, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
 
-export default Vue.extend({
+export default {
   computed: {
     faCopyright () {
       return faCopyright
@@ -24,7 +23,7 @@ export default Vue.extend({
       return faExternalLinkAlt
     }
   }
-})
+}
 </script>
 
 <style lang="scss" module>

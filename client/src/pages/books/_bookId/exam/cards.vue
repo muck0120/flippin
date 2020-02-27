@@ -20,20 +20,18 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-
+<script>
 import HeaderBook from '@/components/TheHeaderBook.vue'
 import ListCard from '@/components/ListCard.vue'
 import FooterCardButtons from '@/components/TheFooterCardButtons.vue'
 
-export default Vue.extend({
+export default {
   components: {
     HeaderBook,
     ListCard,
     FooterCardButtons
   }
-})
+}
 </script>
 
 <style lang="scss" module>

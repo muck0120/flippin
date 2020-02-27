@@ -26,33 +26,31 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-
-export default Vue.extend({
+<script>
+export default {
   data () {
     return {
       isOpen: false
     }
   },
   methods: {
-    accordionToggle (): void {
+    accordionToggle () {
       this.isOpen = !this.isOpen
     },
-    beforeEnter (el: HTMLElement): void {
+    beforeEnter (el) {
       el.style.height = '0'
     },
-    enter (el: HTMLElement): void {
+    enter (el) {
       el.style.height = el.scrollHeight + 'px'
     },
-    beforeLeave (el: HTMLElement): void {
+    beforeLeave (el) {
       el.style.height = el.scrollHeight + 'px'
     },
-    leave (el: HTMLElement): void {
+    leave (el) {
       el.style.height = '0'
     }
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>

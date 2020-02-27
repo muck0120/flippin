@@ -34,11 +34,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 
-export default Vue.extend({
+export default {
   computed: {
     faEdit () {
       return faEdit
@@ -47,7 +46,7 @@ export default Vue.extend({
       return faTrash
     }
   }
-})
+}
 </script>
 
 <style lang="scss" module>

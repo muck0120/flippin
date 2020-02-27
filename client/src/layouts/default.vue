@@ -9,15 +9,14 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import HeaderApp from '@/components/TheHeaderApp.vue'
 
-export default Vue.extend({
+export default {
   components: {
     HeaderApp
   }
-})
+}
 </script>
 
 <style lang="scss" module>

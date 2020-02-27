@@ -56,8 +56,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import { faPlus, faSort } from '@fortawesome/free-solid-svg-icons'
 
 import HeaderBook from '@/components/TheHeaderBook.vue'
@@ -65,7 +64,7 @@ import NoCard from '@/components/TheNoCard.vue'
 import Modal from '@/components/TheModal.vue'
 import ListCard from '@/components/ListCard.vue'
 
-export default Vue.extend({
+export default {
   components: {
     HeaderBook,
     NoCard,
@@ -85,7 +84,7 @@ export default Vue.extend({
       return faSort
     }
   }
-})
+}
 </script>
 
 <style lang="scss" module>

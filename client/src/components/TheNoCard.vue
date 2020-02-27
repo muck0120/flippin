@@ -10,17 +10,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
-export default Vue.extend({
+export default {
   computed: {
     faPlus () {
       return faPlus
     }
   }
-})
+}
 </script>
 
 <style lang="scss" module>
