@@ -1,42 +1,96 @@
 <template>
   <div :class="$style.wrap">
-    <NLink to="/books" tag="h1" :class="$style.title">
+    <NLink
+      to="/books"
+      tag="h1"
+      :class="$style.title"
+    >
       Flippin
     </NLink>
     <nav :class="$style.nav">
-      <template v-if="!isLoggedIn">
-        <NLink to="/signup" :class="$style.button">
+      <template v-if="!user">
+        <NLink
+          to="/signup"
+          :class="$style.button"
+        >
           ユーザー登録
         </NLink>
-        <NLink to="/signin" :class="[$style.button, $style.green]">
+        <NLink
+          to="/signin"
+          :class="[$style.button, $style.green]"
+        >
           ログイン
         </NLink>
       </template>
-      <template v-if="isLoggedIn">
-        <NLink to="/settings" :class="$style.user">
-          <fa :icon="faUser" :class="$style.user__icon" />
-          <span :class="$style.user__name">デモユーザー</span>
+      <template v-if="user">
+        <NLink
+          to="/settings"
+          :class="$style.user"
+        >
+          <fa
+            :icon="faUser"
+            :class="$style.user__icon"
+          />
+          <p :class="$style.user__name">
+            {{ user.user_name }}
+          </p>
         </NLink>
-        <NLink to="/" :class="[$style.button, $style.green]">
+        <div
+          @click="logout()"
+          :class="[$style.button, $style.green]"
+        >
           ログアウト
-        </NLink>
+        </div>
       </template>
     </nav>
+    <Modal
+      v-if="isOpenModal"
+      @close="isOpenModal = false"
+    >
+      <template #title>
+        通信エラー
+      </template>
+      <template #desc>
+        エラーが発生しました。もう一度お試し下さい。
+      </template>
+      <template #button>
+        <button
+          @click="isOpenModal = false"
+          :class="$style.modal__button"
+        >
+          閉じる
+        </button>
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
+import Modal from '@/components/Modal'
 
 export default {
-  data () {
-    return {
-      isLoggedIn: false
-    }
+  components: {
+    Modal
   },
+  data: () => ({
+    isOpenModal: false
+  }),
   computed: {
-    faUser () {
-      return faUser
+    faUser: () => faUser,
+    ...mapState('user', ['user'])
+  },
+  methods: {
+    async logout () {
+      this.$nuxt.$loading.start()
+      const status = await this.$store.dispatch('user/logout')
+      if (status === 200 || status === 401) {
+        this.$router.push('/')
+      } else {
+        this.isOpenModal = true
+      }
+      this.$nuxt.$loading.finish()
     }
   }
 }
@@ -98,6 +152,7 @@ export default {
   border-radius: $height-pc / 2;
   background-color: #fff;
   transition: all 0.3s;
+  cursor: pointer;
 
   @include mq(tb) {
     height: $height-tb;
@@ -181,5 +236,37 @@ export default {
 .user__name {
   font-weight: bold;
   margin-left: 5px;
+}
+
+.modal__button {
+  $height-pc: 40px;
+  $height-sp: 35px;
+
+  width: 200px;
+  height: $height-pc;
+  background-color: #f6416c;
+  border: 3px solid #f6416c;
+  border-radius: $height-pc / 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  transition: all 0.3s;
+  white-space: nowrap;
+
+  @include mq(sp) {
+    width: 80%;
+    height: $height-sp;
+    border-radius: $height-sp / 2;
+    font-size: 14px;
+  }
+}
+
+.modal__button:hover {
+  background-color: #fff;
+  color: #f6416c;
+  transition: all 0.3s;
 }
 </style>

@@ -24,20 +24,19 @@ class UserRequest extends ApiRequest
      */
     public function rules()
     {
-        $userId = Auth::user()->user_id;
-
         switch($this->method()) {
             case 'POST':
                 return [
                     'user_name' => ['required', 'max:20'],
                     'user_mail' => ['required', 'email', 'unique:users,user_mail'],
-                    'user_password' => ['required', 'min:1']
+                    'user_password' => ['required']
                 ];
             case 'PUT':
+                $userId = Auth::user()->user_id;
                 return [
                     'user_name' => ['required', 'max:20'],
                     'user_mail' => ['required', 'email', 'unique:users,user_mail,'.$userId.',user_id'],
-                    'user_password' => ['min:1']
+                    'user_password' => ['present']
                 ];
             default: break;
         }

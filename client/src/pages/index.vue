@@ -11,6 +11,9 @@
 
 <script>
 export default {
+  head: () => ({
+    title: 'ホーム'
+  }),
   layout: 'top'
 }
 </script>

@@ -20,8 +20,9 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $user = User::where('user_mail', $request->user_mail)->first();
-        $equalsPassword = Hash::check($request->user_password, $user->user_password);
-        if ($user && $equalsPassword) {
+        $equalsPassword = $user ?
+            Hash::check($request->user_password, $user->user_password) : false;
+        if ($equalsPassword) {
             if (!$user->user_api_token) {
                 $user->user_api_token = Str::random(80);
                 $user->save();
@@ -85,8 +86,11 @@ class UserController extends Controller
     public function updateProfile(UserRequest $request)
     {
         $user = Auth::user();
-        if (!$request->user_password) {
-            User::find($user->user_id)->fill($request->all())->save();
+        if (is_null($request->user_password) || $request->user_password === '') {
+            User::find($user->user_id)->fill([
+                'user_name' => $request->user_name,
+                'user_mail' => $request->user_mail
+            ])->save();
         } else {
             User::find($user->user_id)->fill([
                 'user_name' => $request->user_name,
@@ -95,6 +99,6 @@ class UserController extends Controller
             ])->save();
         }
         $user = User::find($user->user_id);
-        return response()->json($user, 200);
+        return response()->json(['user' => $user], 200);
     }
 }

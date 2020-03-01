@@ -3,25 +3,161 @@
     <h2 :class="$style.title">
       新規ユーザー登録
     </h2>
-    <input type="text" placeholder="User Name" :class="$style.form">
-    <input type="text" placeholder="Email" :class="$style.form">
-    <input type="password" placeholder="Password" :class="$style.form">
-    <button :class="$style.button">
-      新規登録
-    </button>
+    <ValidationObserver v-slot="{ invalid }">
+      <!-- User name field -->
+      <ValidationProvider
+        rules="required|max:20"
+        v-slot="{ errors, failed }"
+      >
+        <input
+          type="text"
+          v-model="name"
+          placeholder="User Name"
+          :class="[$style.form, $style.top, { [$style.error_form]: failed }]"
+        >
+        <p
+          v-if="failed"
+          :class="$style.error_text"
+        >
+          {{ errors[0] }}
+        </p>
+      </ValidationProvider>
+      <!-- User mail field -->
+      <ValidationProvider
+        rules="required|email"
+        v-slot="{ errors, failed }"
+      >
+        <input
+          type="text"
+          v-model="mail"
+          placeholder="Email"
+          :class="[$style.form, { [$style.error_form]: failed }]"
+        >
+        <p
+          v-if="failed"
+          :class="$style.error_text"
+        >
+          {{ errors[0] }}
+        </p>
+      </ValidationProvider>
+      <!-- User password field -->
+      <ValidationProvider
+        rules="required"
+        v-slot="{ errors, failed }"
+      >
+        <input
+          type="password"
+          v-model="password"
+          placeholder="Password"
+          :class="[$style.form, { [$style.error_form]: failed }]"
+        >
+        <p
+          v-if="failed"
+          :class="$style.error_text"
+        >
+          {{ errors[0] }}
+        </p>
+      </ValidationProvider>
+      <button
+        :class="$style.button"
+        :disabled="invalid"
+        @click="signup()"
+      >
+        新規登録
+      </button>
+    </ValidationObserver>
     <span :class="$style.border"><!-- border --></span>
-    <NLink to="/signin" :class="[$style.button, $style.white]">
+    <NLink
+      :to="$route.query.redirect ? `/signin?redirect=${$route.query.redirect}` : `/signin`"
+      :class="[$style.button, $style.white]"
+    >
       既にアカウントを持っている方
     </NLink>
-    <NLink to="/books" :class="[$style.button, $style.white]">
+    <NLink
+      to="/books"
+      :class="[$style.button, $style.white]"
+    >
       アカウントを作成せずに始める
     </NLink>
+    <Modal
+      v-if="isOpenModal"
+      @close="isOpenModal = false"
+    >
+      <template #title>
+        {{ modalContent.TITLE }}
+      </template>
+      <template #desc>
+        {{ modalContent.DESC }}
+      </template>
+      <template #button>
+        <ModalButtonOne @proceed="isOpenModal = false" />
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script>
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import Modal from '@/components/Modal'
+import ModalButtonOne from '@/components/ModalButtonOne'
+
+const MODAL_CONTENT = {
+  REJECT: {
+    TITLE: '登録に失敗しました',
+    DESC: 'このメールアドレスは既に使用されています。'
+  },
+  ERROR: {
+    TITLE: '通信エラー',
+    DESC: 'エラーが発生しました。もう一度お試し下さい。'
+  }
+}
+
 export default {
-  layout: 'sign'
+  head: () => ({
+    title: 'ユーザー登録'
+  }),
+  layout: 'sign',
+  components: {
+    ValidationObserver,
+    ValidationProvider,
+    Modal,
+    ModalButtonOne
+  },
+  data: () => ({
+    name: '',
+    mail: '',
+    password: '',
+    isOpenModal: false,
+    modalContent: null
+  }),
+  methods: {
+    async signup () {
+      this.$nuxt.$loading.start()
+      const status = await this.$store.dispatch('user/signup', {
+        name: this.name,
+        mail: this.mail,
+        password: this.password
+      })
+      switch (status) {
+        case 200:
+          if (this.$route.query.redirect) {
+            this.$router.push(this.$route.query.redirect)
+          } else {
+            this.$router.push('/books')
+          }
+          break
+        case 422:
+          this.modalContent = MODAL_CONTENT.REJECT
+          this.isOpenModal = true
+          break
+        default:
+          this.modalContent = MODAL_CONTENT.ERROR
+          this.isOpenModal = true
+          break
+      }
+      this.$nuxt.$loading.finish()
+    }
+  }
 }
 </script>
 
@@ -35,6 +171,7 @@ export default {
 .form {
   width: 100%;
   height: 40px;
+  margin-top: 10px;
   padding: 10px 15px;
   border: 1px solid #999;
   border-radius: 5px;
@@ -44,12 +181,18 @@ export default {
   color: #999;
 }
 
-.form:first-of-type {
+.form.top {
   margin-top: 20px;
 }
 
-.form + .form {
-  margin-top: 10px;
+.form.error_form {
+  border: 1px solid #f6416c;
+  color: #f6416c;
+}
+
+.error_text {
+  margin-top: 5px;
+  color: #f6416c;
 }
 
 .button {
@@ -73,6 +216,11 @@ export default {
   @include mq(sp) {
     font-size: 16px;
   }
+}
+
+.button:disabled {
+  pointer-events: none;
+  background-color: #999;
 }
 
 .button::after {

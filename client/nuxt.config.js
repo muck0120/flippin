@@ -1,11 +1,14 @@
 export default {
   mode: 'universal',
   srcDir: 'src/',
+  router: {
+    middleware: ['user-agent']
+  },
   /*
   ** Headers of the page
   */
   head: {
-    title: process.env.npm_package_name || '',
+    title: 'Flippin',
     titleTemplate: '%s | Flippin',
     meta: [
       { charset: 'utf-8' },
@@ -19,7 +22,7 @@ export default {
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#fff' },
+  loading: '@/components/Loading.vue',
   /*
   ** Global CSS
   */
@@ -31,6 +34,8 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '@/plugins/axios',
+    '@/plugins/vee-validate'
   ],
   /*
   ** Nuxt.js dev-modules
@@ -58,6 +63,7 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
+    baseURL: 'http://localhost'
   },
   /*
   ** Dotenv
@@ -98,6 +104,9 @@ export default {
           })
         }
       }
-    }
+    },
+    transpile: [
+      'vee-validate/dist/rules'
+    ]
   }
 }

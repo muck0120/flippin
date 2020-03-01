@@ -3,58 +3,168 @@
     <h2 :class="$style.title">
       設定
     </h2>
-    <div :class="$style.group">
-      <p :class="$style.heading">
-        <span>ユーザー名</span>
-        <span
-          :class="[
-            $style.counter,
-            { [$style.error]: false }
-          ]"
-        >13/20</span>
-      </p>
-      <input
-        type="text"
-        placeholder="20文字以内で入力してください"
-        :class="[$style.form, { [$style.error]: false }]"
+    <ValidationObserver v-slot="{ invalid }">
+      <!-- User name field -->
+      <ValidationProvider
+        rules="required|max:20"
+        v-slot="{ errors, failed }"
       >
-    </div>
-    <div :class="$style.group">
-      <p :class="$style.heading">
-        メールアドレス
-      </p>
-      <input
-        type="text"
-        placeholder="メールアドレス"
-        :class="[$style.form, { [$style.error]: false }]"
+        <div :class="[$style.group, $style.top]">
+          <p :class="$style.heading">
+            <span>ユーザー名</span>
+            <span
+              :class="[
+                $style.counter,
+                { [$style.error]: failed }
+              ]"
+            >{{ name.length }}/20</span>
+          </p>
+          <input
+            type="text"
+            v-model="name"
+            placeholder="20文字以内で入力してください"
+            :class="[$style.form, { [$style.error_form]: failed }]"
+          >
+          <p
+            v-if="failed"
+            :class="$style.error_text"
+          >
+            {{ errors[0] }}
+          </p>
+        </div>
+      </ValidationProvider>
+      <!-- User mail field -->
+      <ValidationProvider
+        rules="required|email"
+        v-slot="{ errors, failed }"
       >
-    </div>
-    <div :class="$style.group">
-      <p :class="$style.heading">
-        パスワード
-      </p>
-      <input
-        type="text"
-        placeholder="パスワード"
-        :class="[$style.form, { [$style.error]: false }]"
-      >
-    </div>
-    <div :class="$style.buttons">
-      <button
-        :class="[
-          $style.button,
-          $style.green,
-          { [$style.disabled]: false }
-        ]"
-      >
-        変更する
-      </button>
-      <button :class="$style.button">
-        キャンセル
-      </button>
-    </div>
+        <div :class="$style.group">
+          <p :class="$style.heading">
+            メールアドレス
+          </p>
+          <input
+            type="text"
+            v-model="mail"
+            placeholder="メールアドレス"
+            :class="[$style.form, { [$style.error_form]: failed }]"
+          >
+        </div>
+        <p
+          v-if="failed"
+          :class="$style.error_text"
+        >
+          {{ errors[0] }}
+        </p>
+      </ValidationProvider>
+      <!-- User password field -->
+      <div :class="$style.group">
+        <p :class="$style.heading">
+          パスワード
+        </p>
+        <input
+          type="password"
+          v-model="password"
+          placeholder="変更する場合のみ入力してください"
+          :class="[$style.form, { [$style.error]: false }]"
+        >
+      </div>
+      <div :class="$style.buttons">
+        <button
+          @click="update()"
+          :class="[$style.button, $style.green]"
+          :disabled="invalid"
+        >
+          変更する
+        </button>
+        <NLink
+          to="/books"
+          tag="button"
+          :class="$style.button"
+        >
+          トップへ戻る
+        </NLink>
+      </div>
+    </ValidationObserver>
+    <Modal
+      v-if="isOpenModal"
+      @close="isOpenModal = false"
+    >
+      <template #title>
+        {{ modalContent.TITLE }}
+      </template>
+      <template #desc>
+        {{ modalContent.DESC }}
+      </template>
+      <template #button>
+        <ModalButtonOne @proceed="isOpenModal = false" />
+      </template>
+    </Modal>
   </div>
 </template>
+
+<script>
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import Modal from '@/components/Modal'
+import ModalButtonOne from '@/components/ModalButtonOne'
+
+const MODAL_CONTENT = {
+  SUCCESS: {
+    TITLE: '更新しました',
+    DESC: 'ユーザー情報の更新が完了しました。'
+  },
+  REJECT: {
+    TITLE: '更新に失敗しました',
+    DESC: 'このメールアドレスは既に使用されています。'
+  },
+  ERROR: {
+    TITLE: '通信エラー',
+    DESC: 'エラーが発生しました。もう一度お試し下さい。'
+  }
+}
+
+export default {
+  middleware: ['authenticated'],
+  components: {
+    ValidationObserver,
+    ValidationProvider,
+    Modal,
+    ModalButtonOne
+  },
+  data: () => ({
+    password: '',
+    isOpenModal: false,
+    modalContent: null
+  }),
+  asyncData: ({ store }) => ({
+    name: store.state.user.user.user_name,
+    mail: store.state.user.user.user_mail
+  }),
+  methods: {
+    async update () {
+      this.$nuxt.$loading.start()
+      const status = await this.$store.dispatch('user/update', {
+        name: this.name,
+        mail: this.mail,
+        password: this.password
+      })
+      switch (status) {
+        case 200:
+          this.password = ''
+          this.modalContent = MODAL_CONTENT.SUCCESS
+          break
+        case 422:
+          this.modalContent = MODAL_CONTENT.REJECT
+          break
+        default:
+          this.modalContent = MODAL_CONTENT.ERROR
+          break
+      }
+      this.isOpenModal = true
+      this.$nuxt.$loading.finish()
+    }
+  }
+}
+</script>
 
 <style lang="scss" module>
 .wrap {
@@ -89,14 +199,11 @@
 
 .group {
   width: 100%;
-}
-
-.group:first-of-type {
-  margin-top: 30px;
-}
-
-.group + .group {
   margin-top: 20px;
+}
+
+.group.top {
+  margin-top: 30px;
 }
 
 .heading {
@@ -142,8 +249,14 @@
   border-radius: 5px;
 }
 
-.form.error {
+.form.error_form {
   border: 1px solid #f6416c;
+  color: #f6416c;
+}
+
+.error_text {
+  margin-top: 5px;
+  color: #f6416c;
 }
 
 .form::placeholder {
@@ -208,7 +321,7 @@
   color: #fff;
 }
 
-.button.green.disabled {
+.button.green:disabled {
   background-color: #fff;
   color: #999;
   border: 3px solid #999;
