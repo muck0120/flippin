@@ -17,6 +17,14 @@
   </div>
 </template>
 
+<script>
+export default {
+  head: () => ({
+    title: 'エラー'
+  })
+}
+</script>
+
 <style lang="scss" module>
 .wrap {
   width: 100%;
