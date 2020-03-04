@@ -25,4 +25,9 @@ class User extends Authenticatable
     {
         return 'user_id';
     }
+
+    public function books()
+    {
+        return $this->hasMany('App\Models\Book', 'user_id');
+    }
 }

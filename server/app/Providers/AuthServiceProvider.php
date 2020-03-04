@@ -25,6 +25,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('edit-book', function ($user, $book) {
+            return $user->user_id === $book->user_id;
+        });
     }
 }

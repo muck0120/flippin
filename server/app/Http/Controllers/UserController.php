@@ -61,6 +61,7 @@ class UserController extends Controller
     /**
      * 新規ユーザー作成。
      *
+     * @param \App\Http\Requests\UserRequest
      * @return \Illuminate\Http\Response
      */
     public function createUser(UserRequest $request)
@@ -81,6 +82,7 @@ class UserController extends Controller
     /**
      * ログイン中のユーザーを更新。
      *
+     * @param \App\Http\Requests\UserRequest
      * @return \Illuminate\Http\Response
      */
     public function updateProfile(UserRequest $request)
