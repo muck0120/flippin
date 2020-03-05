@@ -2,17 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Models\Book;
+use App\Models\Favorite;
 use App\Http\Requests\BookRequest;
 
 class BookController extends Controller
 {
     /**
-     * 問題集の取得（ID指定）。
+     * 問題集の取得（複数）。
      *
      * @param \Illuminate\Http\Request
+     * @param integer $bookId
+     * @return \Illuminate\Http\Response
+     */
+    public function getBooks(Request $request, $bookGroup)
+    {
+        $userId = Auth::id();
+        $books = Book::query();
+
+        if ($bookGroup === 'mines') {
+            $books->where('user_id', $userId);
+        }
+        else if ($bookGroup === 'others') {
+            $books->where([
+                ['user_id', '<>', $userId],
+                ['book_is_publish', '=', true]
+            ]);
+        }
+        else if ($bookGroup === 'favorites') {
+            $favoriteBookIds = $userId ? Favorite::select('book_id')
+                ->where('user_id', $userId) : [];
+            $books->whereIn('book_id', $favoriteBookIds)
+                ->where('book_is_publish', true);
+        }
+
+        if (!empty($request->s)) {
+            $books->where('book_title', 'like', '%'.$request->s.'%')
+                ->orWhere('book_desc', 'like', '%'.$request->s.'%');
+        }
+
+        return response()->json(['books' => $books->paginate(12)], 200);
+    }
+
+    /**
+     * 問題集の取得（ID指定）。
+     *
      * @param integer $bookId
      * @return \Illuminate\Http\Response
      */
@@ -39,7 +76,7 @@ class BookController extends Controller
      */
     public function createBook(BookRequest $request)
     {
-        $userId = Auth::user()->user_id;
+        $userId = Auth::id();
         $book = new Book();
         $book->fill([
             'user_id' => $userId,

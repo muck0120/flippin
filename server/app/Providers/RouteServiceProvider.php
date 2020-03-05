@@ -30,7 +30,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Route::pattern('bookGroup', '(others|mines|favorites)');
+        Route::pattern('bookId', '[0-9]+');
 
         parent::boot();
     }

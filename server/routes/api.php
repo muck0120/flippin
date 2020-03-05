@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 Route::post('/login', 'UserController@login');
 Route::post('/users/profile', 'UserController@createUser');
 
+Route::get('/books/{bookGroup}', 'BookController@getBooks');
 Route::get('/books/{bookId}', 'BookController@getBook');
 
 Route::middleware(['auth:api'])->group(function () {
