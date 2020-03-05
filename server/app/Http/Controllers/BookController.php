@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use App\Models\User;
 use App\Models\Book;
 use App\Http\Requests\BookRequest;
 
@@ -13,19 +11,14 @@ class BookController extends Controller
 {
     /**
      * 問題集の取得（ID指定）。
-     * middlewareを通さないため Auth Facade が使えず、
-     * メソッド内で擬似的にログインチェックを行う。
      *
      * @param \Illuminate\Http\Request
      * @param integer $bookId
      * @return \Illuminate\Http\Response
      */
-    public function getBook(Request $request, $bookId)
+    public function getBook($bookId)
     {
-        $token = $request->bearerToken();
-        $user = User::whereNotNull('user_api_token')
-            ->where('user_api_token', $token)->first();
-
+        $user = Auth::user();
         $book = Book::findOrFail($bookId);
 
         $bookIsPublish = $book->book_is_publish;

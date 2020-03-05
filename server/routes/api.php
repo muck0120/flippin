@@ -37,3 +37,6 @@ Route::get('/unauthorized', function () {
 Route::get('/notfound', function () {
     return response()->json(['message' => 'Not found.'], 404);
 });
+Route::fallback(function () {
+    return response()->json(['message' => 'Not found.'], 404);
+});

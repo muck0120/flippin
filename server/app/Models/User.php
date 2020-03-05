@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     protected $primaryKey = 'user_id';
+    protected $storageKey = 'user_api_token';
     protected $fillable = [
         'user_name',
         'user_mail',
@@ -23,7 +24,7 @@ class User extends Authenticatable
 
     public function getAuthIdentifier()
     {
-        return 'user_id';
+        return $this->user_id;
     }
 
     public function books()
