@@ -15,10 +15,10 @@ class DatabaseSeeder extends Seeder
     {
         factory(User::class, 5)->create();
 
-        factory(User::class, 5)->create()
+        factory(User::class, 10)->create()
             ->each(function ($user) {
                 $user->books()->createMany(
-                    factory(Book::class, 2)->make()->toArray()
+                    factory(Book::class, 60)->make()->toArray()
                 );
             });
     }

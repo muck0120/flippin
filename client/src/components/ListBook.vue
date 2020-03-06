@@ -1,38 +1,93 @@
 <template>
-  <NLink to="/books/1/cards" :class="$style.wrap">
+  <NLink
+    :to="`/books/${book.book_id}/cards`"
+    :class="$style.wrap"
+  >
     <div :class="$style.header">
       <h2 :class="$style.title">
-        問題集タイトル問題集タイトル問題集タイトル問題集タイトル問題集タイトル問題集タイトル
+        {{ book.book_title }}
       </h2>
       <p :class="$style.desc">
-        問題集補足、問題集補足、問題集補足、問題集補足、問題集補足、問題集補足、問題集補足、問題集補足、
+        {{ book.book_desc }}
       </p>
     </div>
-    <div :class="$style.footer">
+    <div :class="[
+      $style.footer,
+      { [$style.mine]: user && user.user_id === book.user_id }
+    ]">
       <!-- みんなの問題集 or お気に入り -->
-      <template v-if="true">
+      <template v-if="!user || (user && user.user_id !== book.user_id)">
         <cite :class="$style.author">
-          Created by <span :class="$style.name">TestUser</span>
+          Created by
+          <span :class="$style.name">
+            {{ book.book_username_created_by }}
+          </span>
         </cite>
       </template>
       <!-- MY問題集 -->
-      <template v-if="false">
+      <template v-else-if="user && user.user_id === book.user_id">
         <div :class="$style.publish">
-          <span v-if="false">公開</span>
-          <span v-if="true">非公開</span>
+          <span v-if="book.book_is_publish">公開</span>
+          <span v-if="!book.book_is_publish">非公開</span>
         </div>
       </template>
-      <div :class="[$style.favorite, { [$style.active]: false }]">
-        130いいね
+      <div
+        @click.prevent="clickFavorite(book.book_id, book.book_is_favorite)"
+        :class="[
+          $style.favorite,
+          { [$style.active]: book.book_is_favorite }
+        ]"
+      >
+        {{ book.book_favorite_count }}いいね
       </div>
     </div>
   </NLink>
 </template>
 
+<script>
+import { mapState } from 'vuex'
+import Modal from '@/components/Modal'
+
+export default {
+  props: {
+    book: {
+      type: Object,
+      required: true
+    }
+  },
+  components: {
+    Modal
+  },
+  data () {
+    return {
+      isOpenModal: false
+    }
+  },
+  computed: {
+    ...mapState('user', ['user'])
+  },
+  methods: {
+    async clickFavorite (bookId, isFavorite) {
+      if (!this.user) {
+        this.$emit('requiredLogin')
+        return false
+      }
+      isFavorite ?
+        await this.$store.dispatch('book/deleteFavorite', { bookId }) :
+        await this.$store.dispatch('book/saveFavorite', { bookId })
+    }
+  }
+}
+</script>
+
 <style lang="scss" module>
 .wrap {
   width: 100%;
-  display: block;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #00b8a9;
   box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.15);
   cursor: pointer;
   transition: all 0.3s;
@@ -102,8 +157,15 @@
   }
 }
 
+.footer.mine {
+  padding: 7px 15px;
+}
+
 .author {
   font-style: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .name {
@@ -143,6 +205,7 @@
 
 .favorite {
   padding-left: 20px;
+  margin-left: 10px;
   font-weight: bold;
   white-space: nowrap;
   color: #999;

@@ -58,6 +58,7 @@ export default {
   width: 100%;
   height: 100%;
   background-color: rgba(#fff, 0.6);
+  z-index: 9999;
 }
 
 .window {

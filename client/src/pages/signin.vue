@@ -95,9 +95,11 @@ const MODAL_CONTENT = {
 }
 
 export default {
-  head: () => ({
-    title: 'ログイン'
-  }),
+  head () {
+    return {
+      title: 'ログイン'
+    }
+  },
   layout: 'sign',
   components: {
     ValidationObserver,
@@ -105,12 +107,14 @@ export default {
     Modal,
     ModalButtonOne
   },
-  data: () => ({
-    mail: '',
-    password: '',
-    isOpenModal: false,
-    modalContent: null
-  }),
+  data () {
+    return {
+      mail: '',
+      password: '',
+      isOpenModal: false,
+      modalContent: null
+    }
+  },
   methods: {
     async login () {
       this.$nuxt.$loading.start()

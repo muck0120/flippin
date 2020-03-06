@@ -36,15 +36,23 @@ class BookController extends Controller
             $favoriteBookIds = $userId ? Favorite::select('book_id')
                 ->where('user_id', $userId) : [];
             $books->whereIn('book_id', $favoriteBookIds)
-                ->where('book_is_publish', true);
+                ->where(function ($query) use ($userId) {
+                    $query->where([
+                        ['user_id', '<>', $userId],
+                        ['book_is_publish', '=', true]
+                    ])
+                    ->orWhere('user_id', $userId);
+                });
         }
 
         if (!empty($request->s)) {
-            $books->where('book_title', 'like', '%'.$request->s.'%')
-                ->orWhere('book_desc', 'like', '%'.$request->s.'%');
+            $books->where(function ($query) use ($request) {
+                $query->where('book_title', 'like', '%'.$request->s.'%')
+                    ->orWhere('book_desc', 'like', '%'.$request->s.'%');
+            });
         }
 
-        return response()->json(['books' => $books->paginate(12)], 200);
+        return response()->json($books->paginate(30), 200);
     }
 
     /**

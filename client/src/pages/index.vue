@@ -11,9 +11,11 @@
 
 <script>
 export default {
-  head: () => ({
-    title: 'ホーム'
-  }),
+  head () {
+    return {
+      title: 'ホーム'
+    }
+  },
   layout: 'top'
 }
 </script>

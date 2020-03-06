@@ -113,9 +113,11 @@ const MODAL_CONTENT = {
 }
 
 export default {
-  head: () => ({
-    title: 'ユーザー登録'
-  }),
+  head () {
+    return {
+      title: 'ユーザー登録'
+    }
+  },
   layout: 'sign',
   components: {
     ValidationObserver,
@@ -123,13 +125,15 @@ export default {
     Modal,
     ModalButtonOne
   },
-  data: () => ({
-    name: '',
-    mail: '',
-    password: '',
-    isOpenModal: false,
-    modalContent: null
-  }),
+  data () {
+    return {
+      name: '',
+      mail: '',
+      password: '',
+      isOpenModal: false,
+      modalContent: null
+    }
+  },
   methods: {
     async signup () {
       this.$nuxt.$loading.start()

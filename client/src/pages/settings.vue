@@ -130,15 +130,19 @@ export default {
     Modal,
     ModalButtonOne
   },
-  data: () => ({
-    password: '',
-    isOpenModal: false,
-    modalContent: null
-  }),
-  asyncData: ({ store }) => ({
-    name: store.state.user.user.user_name,
-    mail: store.state.user.user.user_mail
-  }),
+  data () {
+    return {
+      password: '',
+      isOpenModal: false,
+      modalContent: null
+    }
+  },
+  asyncData ({ store }) {
+    return {
+      name: store.state.user.user.user_name,
+      mail: store.state.user.user.user_mail
+    }
+  },
   methods: {
     async update () {
       this.$nuxt.$loading.start()

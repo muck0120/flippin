@@ -1,58 +1,169 @@
 <template>
   <div :class="$style.wrap">
     <nav :class="$style.menus">
-      <div :class="[$style.menu, { [$style.active]: false }]">
+      <NLink
+        :to="{ path: '/books', query: { tab: 'mines' } }"
+        :class="[$style.menu, { [$style.active]: tabIsMines }]"
+      >
         MY問題集
-      </div>
-      <div :class="[$style.menu, { [$style.active]: true }]">
+      </NLink>
+      <NLink
+        :to="{ path: '/books', query: { tab: 'others' } }"
+        :class="[$style.menu, { [$style.active]: tabIsOthers }]"
+      >
         みんなの問題集
-      </div>
-      <div :class="[$style.menu, { [$style.active]: false }]">
+      </NLink>
+      <NLink
+        :to="{ path: '/books', query: { tab: 'favorites' } }"
+        :class="[$style.menu, { [$style.active]: tabIsFavorites }]"
+      >
         お気に入り
-      </div>
+      </NLink>
     </nav>
     <div :class="$style.search">
-      <input type="text" placeholder="検索ワード" :class="$style.search__input">
-      <button :class="$style.search__button">
+      <input
+        v-model="search"
+        type="text"
+        placeholder="検索ワード"
+        :class="$style.search__input"
+      >
+      <NLink
+        :to="{ path: '/books', query: { tab: $route.query.tab, s: search } }"
+        tag="button"
+        :class="$style.search__button"
+      >
         検索
-      </button>
+      </NLink>
     </div>
     <div :class="$style.books">
-      <template v-if="true">
-        <div v-for="n in 12" :key="n" :class="$style.card">
-          <ListBook />
+      <template v-if="books.length > 0">
+        <div
+          v-for="book in books"
+          :key="`${book.book_id}`"
+          :class="$style.card"
+        >
+          <ListBook
+            :book="book"
+            @requiredLogin="isOpenModalLogin = true"
+          />
         </div>
       </template>
-      <template v-if="false">
+      <template v-else-if="!tabIsFavorites">
         <NoBook />
       </template>
-      <template v-if="false">
+      <template v-else-if="tabIsFavorites">
         <NoFavorite />
       </template>
     </div>
-    <NLink to="/books/create" :class="$style.add">
+    <NLink
+      to="/books/create"
+      :class="$style.add"
+    >
       新規問題集作成
-      <fa :icon="faPlus" :class="$style.plus" />
+      <fa
+        :icon="faPlus"
+        :class="$style.plus"
+      />
     </NLink>
+    <!-- 通信エラー時のモーダル -->
+    <Modal
+      v-if="isOpenModalError"
+      @close="isOpenModalError = false"
+    >
+      <template #title>
+        通信エラー
+      </template>
+      <template #desc>
+        エラーが発生しました。もう一度お試し下さい。
+      </template>
+      <template #button>
+        <ModalButtonOne @proceed="isOpenModalError = false" />
+      </template>
+    </Modal>
+    <!-- ログイン要求のモーダル -->
+    <Modal
+      v-if="isOpenModalLogin"
+      @close="isOpenModalLogin = false"
+    >
+      <template #title>
+        ログインが必要です
+      </template>
+      <template #desc>
+        お気に入りに登録するにはログインが必要です。<br>
+        ログイン画面へ移動しますか？
+      </template>
+      <template #button>
+        <ModalButtonTwo
+          @proceed="$router.push('/signin')"
+          @cancel="isOpenModalLogin = false"
+        >
+          <template #proceedLavel>
+            ログイン
+          </template>
+          <template #cancelLavel>
+            キャンセル
+          </template>
+        </ModalButtonTwo>
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import ListBook from '@/components/ListBook.vue'
 import NoBook from '@/components/TheNoBook.vue'
 import NoFavorite from '@/components/TheNoFavorite.vue'
+import Modal from '@/components/Modal'
+import ModalButtonOne from '@/components/ModalButtonOne'
+import ModalButtonTwo from '@/components/ModalButtonTwo'
 
 export default {
+  validate ({ query }) {
+    if (!query.tab) return true
+    return /(others|mines|favorites)/.test(query.tab)
+  },
+  async asyncData ({ store, query }) {
+    store.commit('book/setBooks', [])
+    const status = await store.dispatch('book/fetchBooks', {
+      group: query.tab || 'others',
+      s: query.s || null
+    })
+    return {
+      search: query.s,
+      isOpenModalError: status !== 200,
+      isOpenModalLogin: false
+    }
+  },
+  head () {
+    return {
+      title: '問題集一覧'
+    }
+  },
   components: {
     ListBook,
     NoBook,
-    NoFavorite
+    NoFavorite,
+    Modal,
+    ModalButtonOne,
+    ModalButtonTwo
   },
+  watchQuery: true,
   computed: {
     faPlus () {
       return faPlus
-    }
+    },
+    tabIsMines () {
+      return this.$route.query.tab === 'mines'
+    },
+    tabIsOthers () {
+      return !this.tabIsMines && !this.tabIsFavorites
+    },
+    tabIsFavorites () {
+      return this.$route.query.tab === 'favorites'
+    },
+    ...mapState('book', ['books'])
   }
 }
 </script>
@@ -100,6 +211,7 @@ $menu-height-sp: 40px;
   font-size: 16px;
   font-weight: bold;
   white-space: nowrap;
+  transition: all 0.3s;
 
   @include mq(tb) {
     font-size: 14px;
@@ -117,6 +229,8 @@ $menu-height-sp: 40px;
 .menu.active {
   background-color: #00b8a9;
   color: #fff;
+  transition: all 0.3s;
+  pointer-events: none;
 }
 
 .search {
@@ -206,7 +320,7 @@ $menu-height-sp: 40px;
 .books {
   margin-top: 50px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: stretch;
   flex-wrap: wrap;
 
@@ -221,7 +335,7 @@ $menu-height-sp: 40px;
 
 .card {
   width: calc((100% - 40px) / 3);
-  margin-bottom: 20px;
+  margin: 0 0 20px 20px;
 
   @include mq(tb) {
     width: calc((100% - 20px) / 2);
@@ -229,6 +343,29 @@ $menu-height-sp: 40px;
 
   @include mq(sp) {
     width: 100%;
+    margin: 0 0 20px 0;
+  }
+}
+
+.card:nth-of-type(3n + 1) {
+  margin: 0 0 20px 0;
+
+  @include mq(tb) {
+    margin: 0 0 20px 20px;
+  }
+
+  @include mq(sp) {
+    margin: 0 0 20px 0;
+  }
+}
+
+.card:nth-of-type(2n + 1) {
+  @include mq(tb) {
+    margin: 0 0 20px 0;
+  }
+
+  @include mq(sp) {
+    margin: 0 0 20px 0;
   }
 }
 
