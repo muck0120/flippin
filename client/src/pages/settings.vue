@@ -123,6 +123,11 @@ const MODAL_CONTENT = {
 }
 
 export default {
+  head () {
+    return {
+      title: 'ユーザー情報の更新'
+    }
+  },
   middleware: ['authenticated'],
   components: {
     ValidationObserver,

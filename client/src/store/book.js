@@ -22,11 +22,19 @@ export const mutations = {
   setFavorite(state, { bookId, wiiBeFavorite }) {
     const index = state.books.findIndex(book => book.book_id === bookId)
     const target = state.books.find(book => book.book_id === bookId)
-    target.book_is_favorite = wiiBeFavorite
-    target.book_favorite_count = wiiBeFavorite ?
-      ++target.book_favorite_count :
-      --target.book_favorite_count
-    state.books.splice(index, 1, target)
+    if (index !== -1 && target) {
+      target.book_is_favorite = wiiBeFavorite
+      target.book_favorite_count = wiiBeFavorite ?
+        ++target.book_favorite_count :
+        --target.book_favorite_count
+      state.books.splice(index, 1, target)
+    }
+    if (state.book && state.book.book_id === bookId) {
+      state.book.book_is_favorite = wiiBeFavorite
+      state.book.book_favorite_count = wiiBeFavorite ?
+        ++state.book.book_favorite_count :
+        --state.book.book_favorite_count
+    }
   }
 }
 
@@ -44,12 +52,44 @@ export const actions = {
       return e.response.status
     }
   },
-  async saveFavorite ({ commit }, { bookId }) {
+  async fetchBook ({ commit }, { bookId }) {
+    try {
+      const { status, data: { book } } =
+        await this.$axios.get(`/books/${bookId}`)
+      commit('setBook', book)
+      return status
+    } catch (e) {
+      return e.response.status
+    }
+  },
+  async storeBook ({ commit }, { title, desc, isPublish }) {
+    try {
+      const { status, data: { book } } =
+        await this.$axios.post('/books/book', {
+          book_title: title,
+          book_desc: desc,
+          book_is_publish: isPublish
+        })
+      commit('setBook', book)
+      return status
+    } catch (e) {
+      return e.response.status
+    }
+  },
+  async deleteBook (context, { bookId }) {
+    try {
+      const { status } = await this.$axios.delete(`/books/${bookId}`)
+      return status
+    } catch (e) {
+      return e.response.status
+    }
+  },
+  async storeFavorite ({ commit }, { bookId }) {
     try {
       await this.$axios.post(`/favorite/${bookId}`)
       commit('setFavorite', { bookId, wiiBeFavorite: true })
     } catch (e) {
-      console.log(e.response)
+      console.log(e)
     }
   },
   async deleteFavorite ({ commit }, { bookId }) {
@@ -57,7 +97,7 @@ export const actions = {
       await this.$axios.delete(`/favorite/${bookId}`)
       commit('setFavorite', { bookId, wiiBeFavorite: false })
     } catch (e) {
-      console.log(e.response)
+      console.log(e)
     }
   }
 }

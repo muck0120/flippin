@@ -29,7 +29,9 @@ class Book extends Model
 
     public function getBookUsernameCreatedByAttribute()
     {
-        return $this->user()->first()->user_name;
+        if (!empty($this->user()->first())) {
+            return $this->user()->first()->user_name;
+        }
     }
 
     public function setBookUsernameCreatedByAttribute()

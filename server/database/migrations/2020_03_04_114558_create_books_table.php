@@ -18,7 +18,7 @@ class CreateBooksTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->string('book_title', 50);
-            $table->string('book_desc', 200);
+            $table->string('book_desc', 200)->nullable();
             $table->boolean('book_is_publish');
             $table->dateTime('book_created_at');
             $table->dateTime('book_updated_at');

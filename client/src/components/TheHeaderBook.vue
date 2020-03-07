@@ -2,34 +2,40 @@
   <div>
     <section :class="$style.wrap">
       <h2 :class="$style.title">
-        {{ title }}
+        {{ book.book_title }}
       </h2>
       <p
-        v-if="desc"
+        v-if="book.book_desc"
         :class="$style.desc"
       >
-        {{ desc }}
+        {{ book.book_desc }}
       </p>
       <div
         v-if="isFooter"
         :class="$style.footer"
       >
-        <div :class="[$style.favorite, { [$style.active]: false }]">
-          130いいね
+        <div
+          @click.prevent="clickFavorite(book.book_id, book.book_is_favorite)"
+          :class="[$style.favorite, { [$style.active]: book.book_is_favorite }]"
+        >
+          {{ book.book_favorite_count }}いいね
         </div>
-        <template v-if="false">
+        <template v-if="!user || book.user_id !== user.user_id">
           <cite :class="$style.author">
-            Created by <span :class="$style.name">TestUser</span>
+            Created by
+            <span :class="$style.name">
+              {{ book.book_username_created_by }}
+            </span>
           </cite>
         </template>
-        <template v-if="true">
+        <template v-if="user && book.user_id === user.user_id">
           <div :class="$style.private">
             <div :class="$style.publish">
-              <span v-if="true">公開</span>
-              <span v-if="false">非公開</span>
+              <span v-if="book.book_is_publish">公開</span>
+              <span v-if="!book.book_is_publish">非公開</span>
             </div>
             <NLink
-              :to="`/books/${1}/update`"
+              :to="`/books/${book.book_id}/update`"
               :class="$style.operate"
             >
               <fa
@@ -39,7 +45,7 @@
             </NLink>
             <div
               :class="$style.operate"
-              @click="$emit('open')"
+              @click="$emit('confirmDelete')"
             >
               <fa
                 :icon="faTrash"
@@ -61,19 +67,11 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 export default {
   props: {
-    title: {
-      type: String,
-      required: true
-    },
-    desc: {
-      type: String,
-      default: '',
-      required: false
-    },
     isFooter: {
       type: Boolean,
       required: true
@@ -90,6 +88,19 @@ export default {
     },
     faTrash () {
       return faTrash
+    },
+    ...mapState('user', ['user']),
+    ...mapState('book', ['book'])
+  },
+  methods: {
+    async clickFavorite (bookId, isFavorite) {
+      if (!this.user) {
+        this.$emit('requiredLogin')
+        return false
+      }
+      isFavorite ?
+        await this.$store.dispatch('book/deleteFavorite', { bookId }) :
+        await this.$store.dispatch('book/storeFavorite', { bookId })
     }
   }
 }

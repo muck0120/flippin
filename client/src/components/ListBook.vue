@@ -74,7 +74,7 @@ export default {
       }
       isFavorite ?
         await this.$store.dispatch('book/deleteFavorite', { bookId }) :
-        await this.$store.dispatch('book/saveFavorite', { bookId })
+        await this.$store.dispatch('book/storeFavorite', { bookId })
     }
   }
 }

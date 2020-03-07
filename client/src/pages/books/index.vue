@@ -107,16 +107,11 @@
       </template>
       <template #button>
         <ModalButtonTwo
+          label-proceed="ログイン"
+          label-cancel="キャンセル"
           @proceed="$router.push('/signin')"
           @cancel="isOpenModalLogin = false"
-        >
-          <template #proceedLavel>
-            ログイン
-          </template>
-          <template #cancelLavel>
-            キャンセル
-          </template>
-        </ModalButtonTwo>
+        />
       </template>
     </Modal>
   </div>
@@ -449,8 +444,7 @@ $menu-height-sp: 40px;
 }
 
 .plus {
-  position: absolute;
-  right: 15px;
+  margin-left: 5px;
   transition: all 0.3s;
 }
 

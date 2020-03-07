@@ -4,16 +4,31 @@
       @click="$emit('proceed')"
       :class="[$style.button, $style.red]"
     >
-      <slot name="proceedLavel"/>
+      {{ labelProceed }}
     </button>
     <button
       @click="$emit('cancel')"
       :class="$style.button"
     >
-      <slot name="cancelLavel"/>
+      {{ labelCancel }}
     </button>
   </div>
 </template>
+
+<script>
+export default {
+  props: {
+    labelProceed: {
+      type: String,
+      required: true
+    },
+    labelCancel: {
+      type: String,
+      required: true
+    }
+  }
+}
+</script>
 
 <style lang="scss" module>
 .wrap {

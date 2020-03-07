@@ -1,15 +1,14 @@
 <template>
   <div :class="$style.wrap">
     <HeaderBook
-      title="AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1"
-      desc="ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。"
       :is-footer="true"
       back-to="/books"
-      @open="modal = true"
+      @requiredLogin="isOpenModalLogin = true"
+      @confirmDelete="isOpenModalDelete = true"
     />
     <div :class="$style.cards">
       <!-- 問題がある場合 -->
-      <template v-if="true">
+      <template v-if="false">
         <div
           v-for="n in 10"
           :key="n"
@@ -25,7 +24,7 @@
         </div>
       </template>
       <!-- 問題がない場合 -->
-      <template v-if="false">
+      <template v-if="true">
         <NoCard />
       </template>
     </div>
@@ -49,31 +48,107 @@
         />
       </button>
     </div>
+    <!-- 問題集削除の確認モーダル -->
     <Modal
-      v-if="modal"
-      @close="modal = false"
-    />
+      v-if="isOpenModalDelete"
+      @close="isOpenModalDelete = false"
+    >
+      <template #title>
+        本当に削除しますか？
+      </template>
+      <template #desc>
+        この問題集の中の問題も全て削除されます。<br>
+        この操作は取り消せません。
+      </template>
+      <template #button>
+        <ModalButtonTwo
+          label-proceed="削除"
+          label-cancel="キャンセル"
+          @proceed="deleteBook()"
+          @cancel="isOpenModalDelete = false"
+        />
+      </template>
+    </Modal>
+    <!-- ログイン要求のモーダル -->
+    <Modal
+      v-if="isOpenModalLogin"
+      @close="isOpenModalLogin = false"
+    >
+      <template #title>
+        ログインが必要です
+      </template>
+      <template #desc>
+        お気に入りに登録するにはログインが必要です。<br>
+        ログイン画面へ移動しますか？
+      </template>
+      <template #button>
+        <ModalButtonTwo
+          label-proceed="ログイン"
+          label-cancel="キャンセル"
+          @proceed="$router.push('/signin')"
+          @cancel="isOpenModalLogin = false"
+        />
+      </template>
+    </Modal>
+    <!-- 通信エラー時のモーダル -->
+    <Modal
+      v-if="isOpenModalError"
+      @close="isOpenModalError = false"
+    >
+      <template #title>
+        通信エラー
+      </template>
+      <template #desc>
+        エラーが発生しました。もう一度お試し下さい。
+      </template>
+      <template #button>
+        <ModalButtonOne
+          @proceed="isOpenModalError = false"
+        />
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { faPlus, faSort } from '@fortawesome/free-solid-svg-icons'
-
 import HeaderBook from '@/components/TheHeaderBook.vue'
 import NoCard from '@/components/TheNoCard.vue'
-import Modal from '@/components/TheModal.vue'
+import Modal from '@/components/Modal'
+import ModalButtonOne from '@/components/ModalButtonOne'
+import ModalButtonTwo from '@/components/ModalButtonTwo'
 import ListCard from '@/components/ListCard.vue'
 
 export default {
+  validate ({ params }) {
+    return /^\d+$/.test(params.bookId)
+  },
+  async asyncData ({ store, params, error }) {
+    const status = await store.dispatch(
+      'book/fetchBook', { bookId: params.bookId }
+    )
+    if (status !== 200) error(status, 'error')
+  },
+  head () {
+    return {
+      title: this.book.book_title
+    }
+  },
   components: {
     HeaderBook,
     NoCard,
     Modal,
+    ModalButtonOne,
+    ModalButtonTwo,
     ListCard
   },
+  watchQuery: true,
   data () {
     return {
-      modal: false
+      isOpenModalLogin: false,
+      isOpenModalDelete: false,
+      isOpenModalError: false
     }
   },
   computed: {
@@ -82,6 +157,21 @@ export default {
     },
     faSort () {
       return faSort
+    },
+    ...mapState('book', ['book'])
+  },
+  methods: {
+    async deleteBook () {
+      this.$nuxt.$loading.start()
+      const status = await this.$store.dispatch(
+        'book/deleteBook', { bookId: this.book.book_id }
+      )
+      if (status === 200) {
+        this.$router.push('/books?tab=mines')
+      } else {
+        this.isOpenModalError = true
+      }
+      this.$nuxt.$loading.finish()
     }
   }
 }

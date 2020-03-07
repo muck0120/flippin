@@ -25,7 +25,7 @@ class BookRequest extends ApiRequest
     {
         return [
             'book_title' => ['required', 'max:50'],
-            'book_desc' => ['required', 'max:200'],
+            'book_desc' => ['max:200'],
             'book_is_publish' => ['required', 'boolean']
         ];
     }
