@@ -35,7 +35,8 @@ export default {
   */
   plugins: [
     '@/plugins/axios',
-    '@/plugins/vee-validate'
+    '@/plugins/vee-validate',
+    { src: '@/plugins/infinite-loading', ssr: false }
   ],
   /*
   ** Nuxt.js dev-modules

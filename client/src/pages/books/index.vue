@@ -47,6 +47,19 @@
             @requiredLogin="isOpenModalLogin = true"
           />
         </div>
+        <client-only>
+          <InfiniteLoading
+            @infinite="infiniteHandler"
+            :class="$style.infiniteloading"
+          >
+            <div slot="spinner">
+              <Spiner />
+            </div>
+            <div slot="no-more">
+              <!-- No More Data -->
+            </div>
+          </InfiniteLoading>
+        </client-only>
       </template>
       <template v-else-if="!tabIsFavorites">
         <NoBook />
@@ -115,6 +128,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import ListBook from '@/components/ListBook.vue'
 import NoBook from '@/components/TheNoBook.vue'
 import NoFavorite from '@/components/TheNoFavorite.vue'
+import Spiner from '@/components/InfiniteLoadingSpiner.vue'
 import Modal from '@/components/Modal'
 import ModalButtonOne from '@/components/ModalButtonOne'
 import ModalButtonTwo from '@/components/ModalButtonTwo'
@@ -125,6 +139,7 @@ export default {
     return /(others|mines|favorites)/.test(query.tab)
   },
   async asyncData ({ store, query }) {
+    store.commit('book/setPage', { currentPage: 0, lastPage: null })
     store.commit('book/setBooks', [])
     const status = await store.dispatch('book/fetchBooks', {
       group: query.tab || 'others',
@@ -145,6 +160,7 @@ export default {
     ListBook,
     NoBook,
     NoFavorite,
+    Spiner,
     Modal,
     ModalButtonOne,
     ModalButtonTwo
@@ -163,7 +179,19 @@ export default {
     tabIsFavorites () {
       return this.$route.query.tab === 'favorites'
     },
-    ...mapState('book', ['books'])
+    ...mapState('book', ['books', 'currentPage', 'lastPage'])
+  },
+  methods: {
+    async infiniteHandler ($state) {
+      await this.$store.dispatch('book/fetchBooks', {
+        group: this.$route.query.tab || 'others',
+        s: this.$route.query.s || null
+      })
+      $state.loaded()
+      if (this.currentPage >= this.lastPage) {
+        $state.complete()
+      }
+    }
   }
 }
 </script>
@@ -367,6 +395,13 @@ $menu-height-sp: 40px;
   @include mq(sp) {
     margin: 0 0 20px 0;
   }
+}
+
+.infiniteloading {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .add {

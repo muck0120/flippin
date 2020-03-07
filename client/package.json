@@ -22,7 +22,8 @@
     "js-cookie": "^2.2.1",
     "nuxt": "^2.0.0",
     "nuxt-fontawesome": "^0.4.0",
-    "vee-validate": "^3.2.5"
+    "vee-validate": "^3.2.5",
+    "vue-infinite-loading": "^2.4.5"
   },
   "devDependencies": {
     "@nuxtjs/eslint-module": "^1.0.0",

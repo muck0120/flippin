@@ -1,6 +1,8 @@
 export const state = () => ({
   books: [],
-  book: null
+  book: null,
+  currentPage: 0,
+  lastPage: null
 })
 
 export const mutations = {
@@ -9,6 +11,10 @@ export const mutations = {
   },
   addBooks (state, books) {
     state.books.push(...books)
+  },
+  setPage (state, { currentPage, lastPage }) {
+    state.currentPage = currentPage
+    state.lastPage = lastPage
   },
   setBook (state, book) {
     state.book = book
@@ -25,11 +31,14 @@ export const mutations = {
 }
 
 export const actions = {
-  async fetchBooks ({ commit }, { group, page = 1, s }) {
+  async fetchBooks ({ state, commit }, { group, s }) {
     try {
-      const { status, data: { data: books } } =
-        await this.$axios.get(`/books/${group}`, { params: { page, s } })
+      const { status, data: { data: books, current_page, last_page } } =
+        await this.$axios.get(`/books/${group}`, {
+          params: { page: state.currentPage + 1, s }
+        })
       commit('addBooks', books)
+      commit('setPage', { currentPage: current_page, lastPage: last_page })
       return status
     } catch (e) {
       return e.response.status
