@@ -76,6 +76,20 @@ export const actions = {
       return e.response.status
     }
   },
+  async updateBook ({ commit }, { bookId, title, desc, isPublish }) {
+    try {
+      const { status, data: { book } } =
+        await this.$axios.put(`/books/${bookId}`, {
+          book_title: title,
+          book_desc: desc,
+          book_is_publish: isPublish
+        })
+      commit('setBook', book)
+      return status
+    } catch (e) {
+      return e.response.status
+    }
+  },
   async deleteBook (context, { bookId }) {
     try {
       const { status } = await this.$axios.delete(`/books/${bookId}`)
