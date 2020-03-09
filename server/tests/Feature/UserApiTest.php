@@ -28,7 +28,21 @@ class UserApiTest extends TestCase
      */
     public function testUnauthorizedUri()
     {
-        $this->get('/unauthorized')->assertStatus(401);
+        $this->get('/unauthorized')
+            ->assertStatus(401)
+            ->assertExactJson(['message' => 'Unauthorized.']);
+    }
+
+    /**
+     * エンドポイント /notfound が status 404 を return することをテスト。
+     *
+     * @return void
+     */
+    public function testNotFoundUri()
+    {
+        $this->get('/notfound')
+            ->assertStatus(404)
+            ->assertExactJson(['message' => 'Not found.']);
     }
 
     /**
@@ -204,7 +218,7 @@ class UserApiTest extends TestCase
      */
     public function testFailCreateUser($name, $mail, $password)
     {
-        $response = $this->postJson('/users/profile', [
+        $this->postJson('/users/profile', [
             'user_name' => $name,
             'user_mail' => $mail !== 'checkUnique' ? $mail : $this->user->user_mail,
             'user_password' => $password

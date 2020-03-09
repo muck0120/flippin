@@ -12,6 +12,27 @@ use App\Http\Requests\BookRequest;
 class BookController extends Controller
 {
     /**
+     * 問題集の取得（ID指定）。
+     *
+     * @param integer $bookId
+     * @return \Illuminate\Http\Response
+     */
+    public function getBook($bookId)
+    {
+        $user = Auth::user();
+        $book = Book::findOrFail($bookId);
+
+        $bookIsPublish = $book->book_is_publish;
+        $bookIsMine = $user ? $user->user_id === $book->user_id : false;
+
+        if ($bookIsPublish || $bookIsMine) {
+            return response()->json(['book' => $book], 200);
+        }
+
+        return redirect('/notfound');
+    }
+
+    /**
      * 問題集の取得（複数）。
      *
      * @param \Illuminate\Http\Request
@@ -53,27 +74,6 @@ class BookController extends Controller
         }
 
         return response()->json($books->paginate(30), 200);
-    }
-
-    /**
-     * 問題集の取得（ID指定）。
-     *
-     * @param integer $bookId
-     * @return \Illuminate\Http\Response
-     */
-    public function getBook($bookId)
-    {
-        $user = Auth::user();
-        $book = Book::findOrFail($bookId);
-
-        $bookIsPublish = $book->book_is_publish;
-        $bookIsMine = $user ? $user->user_id === $book->user_id : false;
-
-        if ($bookIsPublish || $bookIsMine) {
-            return response()->json(['book' => $book], 200);
-        }
-
-        return redirect('/notfound');
     }
 
     /**

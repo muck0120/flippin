@@ -15,6 +15,7 @@ class Book extends Model
         'book_is_publish'
     ];
     protected $casts = [
+        'user_id' => 'integer',
         'book_is_publish' => 'boolean',
         'book_is_favorite' => 'boolean'
     ];
