@@ -22,11 +22,22 @@ class Book extends Model
     protected $appends = [
         'book_username_created_by',
         'book_is_favorite',
-        'book_favorite_count'
+        'book_favorite_count',
+        'book_cards'
     ];
 
     const CREATED_AT = 'book_created_at';
     const UPDATED_AT = 'book_updated_at';
+
+    public function getBookCardsAttribute()
+    {
+        return $this->cards()->get();
+    }
+
+    public function setBookCardsAttribute()
+    {
+        return false;
+    }
 
     public function getBookUsernameCreatedByAttribute()
     {
@@ -68,5 +79,10 @@ class Book extends Model
     public function favorites()
     {
         return $this->hasMany('App\Models\Favorite', 'book_id');
+    }
+
+    public function cards()
+    {
+        return $this->hasMany('App\Models\Card', 'book_id');
     }
 }

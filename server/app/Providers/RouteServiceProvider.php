@@ -32,6 +32,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::pattern('bookGroup', '(others|mines|favorites)');
         Route::pattern('bookId', '[0-9]+');
+        Route::pattern('cardId', '[0-9]+');
 
         parent::boot();
     }

@@ -24,8 +24,9 @@ class BookController extends Controller
 
         $bookIsPublish = $book->book_is_publish;
         $bookIsMine = $user ? $user->user_id === $book->user_id : false;
+        $bookHasCard = $book->cards()->count() !== 0;
 
-        if ($bookIsPublish || $bookIsMine) {
+        if (($bookIsPublish && $bookHasCard) || $bookIsMine) {
             return response()->json(['book' => $book], 200);
         }
 
@@ -51,7 +52,7 @@ class BookController extends Controller
             $books->where([
                 ['user_id', '<>', $userId],
                 ['book_is_publish', '=', true]
-            ]);
+            ])->has('cards');
         }
         else if ($bookGroup === 'favorites') {
             $favoriteBookIds = $userId ? Favorite::select('book_id')
@@ -61,7 +62,7 @@ class BookController extends Controller
                     $query->where([
                         ['user_id', '<>', $userId],
                         ['book_is_publish', '=', true]
-                    ])
+                    ])->has('cards')
                     ->orWhere('user_id', $userId);
                 });
         }

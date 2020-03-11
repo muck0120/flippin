@@ -1,18 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
 Route::post('/login', 'UserController@login');
 Route::post('/users/profile', 'UserController@createUser');
 
@@ -30,6 +17,11 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::post('/favorite/{bookId}', 'FavoriteController@createFavorite');
     Route::delete('/favorite/{bookId}', 'FavoriteController@deleteFavorite');
+
+    Route::post('/books/{bookId}/cards/card', 'CardController@createCard');
+    Route::put('/books/{bookId}/cards/{cardId}', 'CardController@updateCard');
+    Route::put('/books/{bookId}/cards/order', 'CardController@updateCardOrder');
+    Route::delete('/books/{bookId}/cards/{cardId}', 'CardController@deleteCard');
 });
 
 Route::get('/unauthorized', function () {
