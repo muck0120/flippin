@@ -3,21 +3,29 @@
     <p :class="$style.text">
       問題を追加して自分だけの問題集を作成しよう！
     </p>
-    <NLink :to="`/books/${1}/cards/create`" :class="$style.button">
+    <NLink
+      :to="`/books/${book.book_id}/cards/create`"
+      :class="$style.button"
+    >
       問題を作成する
-      <fa :icon="faPlus" :class="$style.plus" />
+      <fa
+        :icon="faPlus"
+        :class="$style.plus"
+      />
     </NLink>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 export default {
   computed: {
     faPlus () {
       return faPlus
-    }
+    },
+    ...mapState('book', ['book']),
   }
 }
 </script>

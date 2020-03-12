@@ -8,46 +8,64 @@
     />
     <div :class="$style.cards">
       <!-- 問題がある場合 -->
-      <template v-if="false">
-        <div
-          v-for="n in 10"
-          :key="n"
-          :class="$style.card"
+      <template v-if="cards.length > 0">
+        <Draggable
+          :value="cards"
+          @input="changeCardsOrder"
+          handle=".grabbable"
+          :animation="200"
         >
           <div
-            v-if="true"
-            :class="$style.sort"
+            v-for="(card, index) in cards"
+            :key="card.card_id"
+            :class="$style.card"
           >
-            <fa :icon="faSort" />
+            <div
+              v-if="user && book.user_id === user.user_id"
+              :class="$style.sort"
+              class="grabbable"
+            >
+              <fa :icon="faSort" />
+            </div>
+            <ListCard
+              :index="index"
+              :card="card"
+            />
           </div>
-          <ListCard />
-        </div>
+        </Draggable>
       </template>
       <!-- 問題がない場合 -->
-      <template v-if="true">
+      <template v-else>
         <NoCard />
       </template>
     </div>
     <div
-      v-if="false"
+      v-if="cards.length > 0"
       :class="$style.buttons"
     >
-      <button :class="[$style.button, $style.red]">
+      <NLink
+        :to="`/books/${bookId}/exam`"
+        :class="[$style.button, $style.red]"
+      >
         問題を解く
         <img
           src="@/assets/images/arrow-white.svg"
-          alt=""
           :class="$style.icon"
         >
-      </button>
-      <button :class="$style.button">
+      </NLink>
+      <NLink
+        v-if="user && book.user_id === user.user_id"
+        :to="`/books/${bookId}/cards/create`"
+        :class="$style.button"
+      >
         問題を追加する
         <fa
           :icon="faPlus"
           :class="$style.icon"
         />
-      </button>
+      </NLink>
     </div>
+
     <!-- 問題集削除の確認モーダル -->
     <Modal
       v-if="isOpenModalDelete"
@@ -69,6 +87,7 @@
         />
       </template>
     </Modal>
+
     <!-- ログイン要求のモーダル -->
     <Modal
       v-if="isOpenModalLogin"
@@ -90,6 +109,7 @@
         />
       </template>
     </Modal>
+
     <!-- 通信エラー時のモーダル -->
     <Modal
       v-if="isOpenModalError"
@@ -112,6 +132,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import Draggable from 'vuedraggable'
 import { faPlus, faSort } from '@fortawesome/free-solid-svg-icons'
 import HeaderBook from '@/components/TheHeaderBook.vue'
 import NoCard from '@/components/TheNoCard.vue'
@@ -137,6 +158,7 @@ export default {
   },
   components: {
     HeaderBook,
+    Draggable,
     NoCard,
     Modal,
     ModalButtonOne,
@@ -158,13 +180,18 @@ export default {
     faSort () {
       return faSort
     },
-    ...mapState('book', ['book'])
+    bookId () {
+      return this.$route.params.bookId
+    },
+    ...mapState('user', ['user']),
+    ...mapState('book', ['book']),
+    ...mapState('card', ['cards'])
   },
   methods: {
     async deleteBook () {
       this.$nuxt.$loading.start()
       const status = await this.$store.dispatch(
-        'book/deleteBook', { bookId: this.book.book_id }
+        'book/deleteBook', { bookId: this.bookId }
       )
       if (status === 200) {
         this.$router.push('/books?tab=mines')
@@ -172,6 +199,14 @@ export default {
         this.isOpenModalError = true
       }
       this.$nuxt.$loading.finish()
+    },
+    changeCardsOrder (cards) {
+      const cardIds = cards.map(card => card.card_id)
+      this.$store.dispatch('card/updateCardOrder', {
+        bookId: this.book.book_id,
+        payload: cardIds,
+        cards
+      })
     }
   }
 }
@@ -200,6 +235,7 @@ export default {
 .sort {
   font-size: 30px;
   padding-right: 10px;
+  cursor: grab;
 
   @include mq(tb) {
     font-size: 27px;
@@ -210,6 +246,10 @@ export default {
     font-size: 24px;
     padding-right: 5px;
   }
+}
+
+.sort:active {
+  cursor: grabbing;
 }
 
 .buttons {

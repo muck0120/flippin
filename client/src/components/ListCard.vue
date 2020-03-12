@@ -1,13 +1,31 @@
 <template>
-  <NLink :to="`/books/${1}/cards/${1}`" :class="$style.wrap">
+  <NLink
+    :to="`/books/${card.book_id}/cards/${card.card_id}`"
+    :class="$style.wrap"
+  >
     <div :class="$style.number">
-      99
+      {{ index + 1 }}
     </div>
     <p :class="$style.title">
-      テスト問題、テスト問題、テスト問題、テスト問題、テスト問題、テスト問題、テスト問題、テスト問題、テスト問題、テスト問題、テスト問題、テスト問題、テスト問題、テスト問題、テスト問題、テスト問題、テスト問題、テスト問題
+      {{ card.card_question }}
     </p>
   </NLink>
 </template>
+
+<script>
+export default {
+  props: {
+    index: {
+      type: Number,
+      required: true
+    },
+    card: {
+      type: Object,
+      required: true
+    }
+  }
+}
+</script>
 
 <style lang="scss" module>
 $height: 50px;

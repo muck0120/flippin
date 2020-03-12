@@ -2,39 +2,51 @@
   <div :class="$style.wrap">
     <div :class="$style.header">
       <h2 :class="$style.title">
-        問題1
+        問題{{ cardIndex + 1 }}
       </h2>
-      <fa
-        :icon="faEdit"
-        :class="$style.icon"
-      />
-      <fa
-        :icon="faTrash"
-        :class="$style.icon"
-      />
+      <template v-if="user && user.user_id === book.user_id">
+        <NLink
+          :to="`/books/${bookId}/cards/${cardId}/update`"
+          :class="$style.icon"
+        >
+          <fa :icon="faEdit" />
+        </NLink>
+        <div
+          @click="$emit('confirmDelete')"
+          :class="$style.icon"
+        >
+          <fa :icon="faTrash" />
+        </div>
+      </template>
     </div>
     <p :class="$style.question">
-      ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。
+      {{ card.card_question }}
     </p>
     <img
-      src="@/static/dummy.png"
+      v-if="card.card_question_image"
+      :src="imageUrl"
       :class="$style.image"
     >
     <span :class="$style.border"><!-- border --></span>
     <label
-      v-for="n in 4"
-      :key="n"
+      v-for="choice in choices"
+      :key="choice.choice_id"
       :class="$style.choice"
     >
-      <input type="radio" name="choice" :class="$style.check">
+      <input
+        type="radio"
+        name="choice"
+        :class="$style.check"
+      >
       <p :class="$style.text">
-        ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。
+        {{ choice.card_choice_text }}
       </p>
     </label>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 export default {
@@ -44,7 +56,28 @@ export default {
     },
     faTrash () {
       return faTrash
-    }
+    },
+    imageUrl () {
+      const url = process.env.BASE_URL_ASSETS
+      const cardId = this.cardId
+      const filename = this.card.card_question_image
+      return `${url}/images/cards/${cardId}/${filename}`
+    },
+    bookId () {
+      return this.$route.params.bookId
+    },
+    cardId () {
+      return this.$route.params.cardId
+    },
+    cardIndex () {
+      return this.cards.findIndex(card => card === this.card)
+    },
+    choices () {
+      return this.card.card_choices
+    },
+    ...mapState('user', ['user']),
+    ...mapState('book', ['book']),
+    ...mapState('card', ['cards', 'card'])
   }
 }
 </script>

@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             ]);
         });
 
-        factory(User::class, 5)->create()->each(function ($user) {
+        factory(User::class, 30)->create()->each(function ($user) {
             factory(Book::class, 5)->create([
                 'user_id' => $user->user_id
             ])->each(function ($book) {

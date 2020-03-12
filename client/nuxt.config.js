@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 export default {
   mode: 'universal',
   srcDir: 'src/',
@@ -64,7 +66,7 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: 'http://localhost'
+    baseURL: process.env.BASE_URL_API
   },
   /*
   ** Dotenv

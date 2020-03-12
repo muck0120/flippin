@@ -1,28 +1,47 @@
 <template>
   <div :class="$style.wrap">
     <NLink
-      v-if="true"
-      to=""
+      v-if="prevTo !== ''"
+      :to="prevTo"
       :class="[$style.button, $style.prev]"
     >
       前の問題
     </NLink>
     <NLink
-      v-if="true"
-      to=""
+      v-if="compTo !== ''"
+      :to="compTo"
       :class="[$style.button, $style.done]"
     >
       テストを完了する
     </NLink>
     <NLink
-      v-if="true"
-      to=""
+      v-if="nextTo !== ''"
+      :to="nextTo"
       :class="[$style.button, $style.next]"
     >
       次の問題
     </NLink>
   </div>
 </template>
+
+<script>
+export default {
+  props: {
+    prevTo: {
+      type: String,
+      required: true
+    },
+    nextTo: {
+      type: String,
+      required: true
+    },
+    compTo: {
+      type: String,
+      required: true
+    }
+  }
+}
+</script>
 
 <style lang="scss" module>
 $button-width-pc: 250px;

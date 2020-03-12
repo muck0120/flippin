@@ -5,7 +5,7 @@
         {{ book.book_title }}
       </h2>
       <p
-        v-if="book.book_desc"
+        v-if="book.book_desc && isDescription"
         :class="$style.desc"
       >
         {{ book.book_desc }}
@@ -75,6 +75,11 @@ export default {
     isFooter: {
       type: Boolean,
       required: true
+    },
+    isDescription: {
+      type: Boolean,
+      default: true,
+      required: false
     },
     backTo: {
       type: String,

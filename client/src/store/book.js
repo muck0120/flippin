@@ -52,11 +52,18 @@ export const actions = {
       return e.response.status
     }
   },
-  async fetchBook ({ commit }, { bookId }) {
+  async fetchBook ({ commit }, { bookId, cardId = null }) {
     try {
       const { status, data: { book } } =
         await this.$axios.get(`/books/${bookId}`)
       commit('setBook', book)
+      commit('card/setCards', book.book_cards, { root: true })
+      if (cardId) {
+        const card = book.book_cards.find(card => {
+          return card.card_id === parseInt(cardId)
+        })
+        commit('card/setCard', card, { root: true })
+      }
       return status
     } catch (e) {
       return e.response.status

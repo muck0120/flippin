@@ -3,7 +3,7 @@
     <div :class="$style.answer">
       <span :class="$style.answer__label">正解</span>
       <p :class="$style.answer__text">
-        ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。ここに選択肢が入ります。
+        {{ correctChoice.card_choice_text }}
       </p>
     </div>
     <span :class="$style.border"><!-- border --></span>
@@ -11,21 +11,43 @@
       解説
     </h3>
     <p :class="$style.comment__text">
-      ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。ここに問題が入ります。
+      {{ card.card_explanation }}
     </p>
     <img
-      src="@/static/dummy.png"
+      v-if="card.card_explanation_image"
+      :src="imageUrl"
       :class="$style.image"
     >
   </Accordion>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import Accordion from '@/components/Accordion.vue'
 
 export default {
   components: {
     Accordion
+  },
+  computed: {
+    cardId () {
+      return this.$route.params.cardId
+    },
+    choices () {
+      return this.card.card_choices
+    },
+    correctChoice () {
+      return this.choices.find(choice => {
+        return choice.card_choice_is_correct === true
+      })
+    },
+    imageUrl () {
+      const url = process.env.BASE_URL_ASSETS
+      const cardId = this.cardId
+      const filename = this.card.card_explanation_image
+      return `${url}/images/cards/${cardId}/${filename}`
+    },
+    ...mapState('card', ['card'])
   }
 }
 </script>
