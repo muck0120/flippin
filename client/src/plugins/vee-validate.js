@@ -1,5 +1,5 @@
 import { extend } from 'vee-validate'
-import { required, email, max } from 'vee-validate/dist/rules'
+import { required, email, max, image } from 'vee-validate/dist/rules'
 
 extend('required', {
   ...required,
@@ -14,4 +14,9 @@ extend('max', {
 extend('email', {
   ...email,
   message: '正しいメール形式で入力して下さい。'
+})
+
+extend('image', {
+  ...image,
+  message: 'ファイル形式が正しくありません。'
 })

@@ -1,71 +1,72 @@
 <template>
-  <div>
+  <ValidationObserver
+    v-slot="{ invalid }"
+    tag="div"
+  >
     <h2 :class="$style.title">
       新規ユーザー登録
     </h2>
-    <ValidationObserver v-slot="{ invalid }">
-      <!-- User name field -->
-      <ValidationProvider
-        rules="required|max:20"
-        v-slot="{ errors, failed }"
+    <!-- User name field -->
+    <ValidationProvider
+      rules="required|max:20"
+      v-slot="{ errors, failed }"
+    >
+      <input
+        type="text"
+        v-model="name"
+        placeholder="User Name"
+        :class="[$style.form, $style.top, { [$style.error_form]: failed }]"
       >
-        <input
-          type="text"
-          v-model="name"
-          placeholder="User Name"
-          :class="[$style.form, $style.top, { [$style.error_form]: failed }]"
-        >
-        <p
-          v-if="failed"
-          :class="$style.error_text"
-        >
-          {{ errors[0] }}
-        </p>
-      </ValidationProvider>
-      <!-- User mail field -->
-      <ValidationProvider
-        rules="required|email"
-        v-slot="{ errors, failed }"
+      <p
+        v-if="failed"
+        :class="$style.error_text"
       >
-        <input
-          type="text"
-          v-model="mail"
-          placeholder="Email"
-          :class="[$style.form, { [$style.error_form]: failed }]"
-        >
-        <p
-          v-if="failed"
-          :class="$style.error_text"
-        >
-          {{ errors[0] }}
-        </p>
-      </ValidationProvider>
-      <!-- User password field -->
-      <ValidationProvider
-        rules="required"
-        v-slot="{ errors, failed }"
+        {{ errors[0] }}
+      </p>
+    </ValidationProvider>
+    <!-- User mail field -->
+    <ValidationProvider
+      rules="required|email"
+      v-slot="{ errors, failed }"
+    >
+      <input
+        type="text"
+        v-model="mail"
+        placeholder="Email"
+        :class="[$style.form, { [$style.error_form]: failed }]"
       >
-        <input
-          type="password"
-          v-model="password"
-          placeholder="Password"
-          :class="[$style.form, { [$style.error_form]: failed }]"
-        >
-        <p
-          v-if="failed"
-          :class="$style.error_text"
-        >
-          {{ errors[0] }}
-        </p>
-      </ValidationProvider>
-      <button
-        :class="$style.button"
-        :disabled="invalid"
-        @click="signup()"
+      <p
+        v-if="failed"
+        :class="$style.error_text"
       >
-        新規登録
-      </button>
-    </ValidationObserver>
+        {{ errors[0] }}
+      </p>
+    </ValidationProvider>
+    <!-- User password field -->
+    <ValidationProvider
+      rules="required"
+      v-slot="{ errors, failed }"
+    >
+      <input
+        type="password"
+        v-model="password"
+        placeholder="Password"
+        :class="[$style.form, { [$style.error_form]: failed }]"
+      >
+      <p
+        v-if="failed"
+        :class="$style.error_text"
+      >
+        {{ errors[0] }}
+      </p>
+    </ValidationProvider>
+    <button
+      :class="$style.button"
+      :disabled="invalid"
+      @click="signup()"
+    >
+      新規登録
+    </button>
     <span :class="$style.border"><!-- border --></span>
     <NLink
       :to="$route.query.redirect ? `/signin?redirect=${$route.query.redirect}` : `/signin`"
@@ -93,7 +94,7 @@
         <ModalButtonOne @proceed="isOpenModal = false" />
       </template>
     </Modal>
-  </div>
+  </ValidationObserver>
 </template>
 
 <script>

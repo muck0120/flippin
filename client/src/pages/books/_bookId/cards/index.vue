@@ -203,10 +203,9 @@ export default {
     changeCardsOrder (cards) {
       const cardIds = cards.map(card => card.card_id)
       this.$store.dispatch('card/updateCardOrder', {
-        bookId: this.book.book_id,
-        payload: cardIds,
-        cards
+        bookId: this.book.book_id, payload: cardIds
       })
+      this.$store.commit('card/setCards', cards)
     }
   }
 }

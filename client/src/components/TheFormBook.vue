@@ -1,96 +1,99 @@
 <template>
-  <div :class="$style.wrap">
+  <ValidationObserver
+    v-slot="{ invalid }"
+    tag="div"
+    :class="$style.wrap"
+  >
     <h2 :class="$style.title">
       新しく問題集を作成する
     </h2>
-    <ValidationObserver v-slot="{ invalid }">
-      <!-- Book Title field -->
-      <ValidationProvider
-        rules="required|max:50"
-        v-slot="{ errors, failed }"
+    <!-- Book Title field -->
+    <ValidationProvider
+      rules="required|max:50"
+      v-slot="{ errors, failed }"
+      tag="div"
+      :class="$style.group"
+    >
+      <p :class="$style.heading">
+        <span>タイトル（必須）</span>
+        <span :class="[
+          $style.counter,
+          { [$style.error]: failed }
+        ]">{{ title.length }}/50</span>
+      </p>
+      <input
+        type="text"
+        :value="title"
+        @input="$emit('update:title', $event.target.value)"
+        placeholder="50文字以内で入力してください"
+        :class="[$style.form, { [$style.error_form]: failed }]"
       >
-        <div :class="$style.group">
-          <p :class="$style.heading">
-            <span>タイトル（必須）</span>
-            <span :class="[
-              $style.counter,
-              { [$style.error]: failed }
-            ]">{{ title.length }}/50</span>
-          </p>
-          <input
-            type="text"
-            :value="title"
-            @input="$emit('update:title', $event.target.value)"
-            placeholder="50文字以内で入力してください"
-            :class="[$style.form, { [$style.error_form]: failed }]"
-          >
-          <p
-            v-if="failed"
-            :class="$style.error_text"
-          >
-            {{ errors[0] }}
-          </p>
-        </div>
-      </ValidationProvider>
-      <!-- Book Description field -->
-      <ValidationProvider
-        rules="max:200"
-        v-slot="{ errors, failed }"
+      <p
+        v-if="failed"
+        :class="$style.error_text"
       >
-        <div :class="$style.group">
-          <p :class="$style.heading">
-            <span>説明文</span>
-            <span :class="[
-              $style.counter,
-              { [$style.error]: failed }
-            ]">{{ desc.length }}/200</span>
-          </p>
-          <textarea
-            :value="desc"
-            @input="$emit('update:desc', $event.target.value)"
-            placeholder="200文字以内で入力してください"
-            :class="[$style.form, $style.textarea, { [$style.error_form]: failed }]"
-          />
-          <p
-            v-if="failed"
-            :class="$style.error_text"
-          >
-            {{ errors[0] }}
-          </p>
-        </div>
-      </ValidationProvider>
-      <label :class="$style.checklabel">
-        <input
-          type="checkbox"
-          :value="isPublish"
-          @input="$emit('update:isPublish', !isPublish)"
-          :checked="isPublish"
-          :class="$style.checkbox"
-        >
-        <span :class="$style.checktext">この問題集を公開する</span>
-      </label>
-      <div :class="$style.buttons">
-        <button
-          @click="$emit('submit')"
-          :class="[$style.button, $style.green]"
-          :disabled="invalid"
-        >
-          <template v-if="$route.path.match('create')">
-            新規作成
-          </template>
-          <template v-if="$route.path.match('update')">
-            更新する
-          </template>
-        </button>
-        <button
-          @click="$emit('cancel')"
-          :class="$style.button"
-        >
-          キャンセル
-        </button>
-      </div>
-    </ValidationObserver>
-  </div>
+        {{ errors[0] }}
+      </p>
+    </ValidationProvider>
+    <!-- Book Description field -->
+    <ValidationProvider
+      rules="max:200"
+      v-slot="{ errors, failed }"
+      tag="div"
+      :class="$style.group"
+    >
+      <p :class="$style.heading">
+        <span>説明文</span>
+        <span :class="[
+          $style.counter,
+          { [$style.error]: failed }
+        ]">{{ desc.length }}/200</span>
+      </p>
+      <textarea
+        :value="desc"
+        @input="$emit('update:desc', $event.target.value)"
+        placeholder="200文字以内で入力してください"
+        :class="[$style.form, $style.textarea, { [$style.error_form]: failed }]"
+      />
+      <p
+        v-if="failed"
+        :class="$style.error_text"
+      >
+        {{ errors[0] }}
+      </p>
+    </ValidationProvider>
+    <!-- Book Publish Check field -->
+    <label :class="$style.checklabel">
+      <input
+        type="checkbox"
+        :value="isPublish"
+        @input="$emit('update:isPublish', !isPublish)"
+        :checked="isPublish"
+        :class="$style.checkbox"
+      >
+      <span :class="$style.checktext">この問題集を公開する</span>
+    </label>
+    <div :class="$style.buttons">
+      <button
+        @click="$emit('submit')"
+        :class="[$style.button, $style.green]"
+        :disabled="invalid"
+      >
+        <template v-if="$route.path.match('create')">
+          新規作成
+        </template>
+        <template v-if="$route.path.match('update')">
+          更新する
+        </template>
+      </button>
+      <button
+        @click="$emit('cancel')"
+        :class="$style.button"
+      >
+        キャンセル
+      </button>
+    </div>
+  </ValidationObserver>
 </template>
 
 <script>

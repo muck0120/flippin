@@ -1,53 +1,54 @@
 <template>
-  <div>
+  <ValidationObserver
+    v-slot="{ invalid }"
+    tag="div"
+  >
     <h2 :class="$style.title">
       ログイン
     </h2>
-    <ValidationObserver v-slot="{ invalid }">
-      <!-- User mail field -->
-      <ValidationProvider
-        rules="required|email"
-        v-slot="{ errors, failed }"
+    <!-- User mail field -->
+    <ValidationProvider
+      rules="required|email"
+      v-slot="{ errors, failed }"
+    >
+      <input
+        type="text"
+        v-model="mail"
+        placeholder="Email"
+        :class="[$style.form, $style.top, { [$style.error_form]: failed }]"
       >
-        <input
-          type="text"
-          v-model="mail"
-          placeholder="Email"
-          :class="[$style.form, $style.top, { [$style.error_form]: failed }]"
-        >
-        <p
-          v-if="failed"
-          :class="$style.error_text"
-        >
-          {{ errors[0] }}
-        </p>
-      </ValidationProvider>
-      <!-- User password field -->
-      <ValidationProvider
-        rules="required"
-        v-slot="{ errors, failed }"
+      <p
+        v-if="failed"
+        :class="$style.error_text"
       >
-        <input
-          type="password"
-          v-model="password"
-          placeholder="Password"
-          :class="[$style.form, { [$style.error_form]: failed }]"
-        >
-        <p
-          v-if="failed"
-          :class="$style.error_text"
-        >
-          {{ errors[0] }}
-        </p>
-      </ValidationProvider>
-      <button
-        :class="$style.button"
-        :disabled="invalid"
-        @click="login()"
+        {{ errors[0] }}
+      </p>
+    </ValidationProvider>
+    <!-- User password field -->
+    <ValidationProvider
+      rules="required"
+      v-slot="{ errors, failed }"
+    >
+      <input
+        type="password"
+        v-model="password"
+        placeholder="Password"
+        :class="[$style.form, { [$style.error_form]: failed }]"
       >
-        ログイン
-      </button>
-    </ValidationObserver>
+      <p
+        v-if="failed"
+        :class="$style.error_text"
+      >
+        {{ errors[0] }}
+      </p>
+    </ValidationProvider>
+    <button
+      :class="$style.button"
+      :disabled="invalid"
+      @click="login()"
+    >
+      ログイン
+    </button>
     <span :class="$style.border"><!-- border --></span>
     <NLink
       :to="$route.query.redirect ? `/signup?redirect=${$route.query.redirect}` : `/signup`"
@@ -75,7 +76,7 @@
         <ModalButtonOne @proceed="isOpenModal = false" />
       </template>
     </Modal>
-  </div>
+  </ValidationObserver>
 </template>
 
 <script>

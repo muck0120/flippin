@@ -1,131 +1,336 @@
 <template>
-  <div :class="$style.wrap">
+  <ValidationObserver
+    v-slot="{ invalid }"
+    tag="div"
+    ref="allValidateObserver"
+    :class="$style.wrap"
+  >
     <h2 :class="$style.title">
       新しく問題を作成する
     </h2>
-    <div :class="$style.group">
+    <!-- Card Question field -->
+    <ValidationProvider
+      rules="required|max:2000"
+      v-slot="{ errors, failed }"
+      tag="div"
+      :class="$style.group"
+    >
       <p :class="$style.heading">
         <span>問題文（必須）</span>
-        <span
-          :class="[
-            $style.counter,
-            { [$style.error]: false }
-          ]"
-        >13/2000</span>
+        <span :class="[
+          $style.counter,
+          { [$style.error]: failed }
+        ]">{{ question.length }}/2000</span>
       </p>
       <textarea
+        :value="question"
+        @input="$emit('update:question', $event.target.value)"
         placeholder="2000文字以内で入力してください"
-        :class="[
-          $style.form,
-          { [$style.error]: false }
-        ]"
+        :class="[$style.form, { [$style.error_form]: failed }]"
       />
-    </div>
-    <button
-      :class="[
-        $style.button,
-        $style.button__image
-      ]"
+      <p
+        v-if="failed"
+        :class="$style.error_text"
+      >
+        {{ errors[0] }}
+      </p>
+    </ValidationProvider>
+    <!-- Card Question Image field -->
+    <ValidationProvider
+      rules="image"
+      ref="questionimageValidateProvider"
+      v-slot="{ validate, errors, failed }"
     >
-      画像を選択
-    </button>
-    <div
-      v-for="n in 4"
-      :key="n"
+      <img
+        v-if="questionImage"
+        :src="questionImage"
+        :class="$style.image"
+      >
+      <label
+        v-if="!questionImage"
+        :class="[
+          $style.button,
+          $style.button_image,
+          { [$style.button_red]: failed }
+        ]"
+      >
+        <input
+          type="file"
+          @change="setQuestionImage($event)"
+        >
+        画像を選択
+      </label>
+      <p
+        v-if="failed"
+        :class="$style.error_text"
+      >
+        {{ errors[0] }}
+      </p>
+      <button
+        v-if="questionImage"
+        @click="deleteQuestionImageUpload()"
+        :class="[
+          $style.button,
+          $style.button_image,
+          $style.button_red
+        ]"
+      >
+        画像を削除
+      </button>
+    </ValidationProvider>
+    <!-- Card Choices field -->
+    <ValidationProvider
+      v-for="(choice, index) in choices"
+      :key="index"
+      rules="required|max:200"
+      v-slot="{ errors, failed }"
+      tag="div"
       :class="$style.select"
     >
-      <div :class="$style.group">
-        <p :class="$style.heading">
-          <span>選択肢{{ n }}（必須）</span>
-          <span
-            :class="[
+      <div :class="$style.select_inner">
+        <div :class="$style.group">
+          <p :class="$style.heading">
+            <span>選択肢{{ index + 1 }}（必須）</span>
+            <span :class="[
               $style.counter,
-              { [$style.error]: false }
+              { [$style.error]: failed }
+            ]">{{ choice.card_choice_text.length }}/200</span>
+          </p>
+          <textarea
+            :value="choice.card_choice_text"
+            @input="setChoiceText($event.target.value, index)"
+            placeholder="2000文字以内で入力してください"
+            :class="[
+              $style.form,
+              $style.form_select,
+              { [$style.error_form]: failed }
             ]"
-          >13/2000</span>
-        </p>
-        <textarea
-          placeholder="2000文字以内で入力してください"
-          :class="[
-            $style.form,
-            $style.form__select,
-            { [$style.error]: false }
-          ]"
+          />
+        </div>
+        <input
+          type="radio"
+          name="correct"
+          @input="setChoiceIsCorrect(index)"
+          :checked="choice.card_choice_is_correct"
+          :id="`correct${index}`"
+          :class="$style.radio"
         />
+        <label
+          :for="`correct${index}`"
+          :class="$style.correct"
+        >
+          正解
+        </label>
+        <div :class="$style.delete">
+          <div
+            v-if="index > 1"
+            @click="deleteChoice(index)"
+            :class="$style.delete_inner"
+          >
+            <fa :icon="faTrash" />
+          </div>
+        </div>
       </div>
-      <div :class="$style.correct">
-        正解
-      </div>
-      <fa
-        :icon="faTrash"
-        :class="$style.delete"
-      />
-    </div>
+      <p
+        v-if="failed"
+        :class="$style.error_text"
+      >
+        {{ errors[0] }}
+      </p>
+    </ValidationProvider>
     <button
-      :class="[
-        $style.button,
-        $style.button__add
-      ]"
+      @click="$emit('addChoice')"
+      :class="[$style.button, $style.button_add]"
     >
       選択肢を追加
       <fa
         :icon="faPlus"
-        :class="$style.button__add__icon"
+        :class="$style.button_add_icon"
       />
     </button>
-    <div :class="$style.group">
+    <!-- Card Explanation field -->
+    <ValidationProvider
+      rules="max:2000"
+      v-slot="{ errors, failed }"
+      tag="div"
+      :class="$style.group"
+    >
       <p :class="$style.heading">
         <span>解説文</span>
-        <span
-          :class="[
-            $style.counter,
-            { [$style.error]: false }
-          ]"
-        >13/2000</span>
+        <span :class="[
+          $style.counter,
+          { [$style.error]: failed }
+        ]">{{ explanation.length }}/2000</span>
       </p>
       <textarea
+        :value="explanation"
+        @input="$emit('update:explanation', $event.target.value)"
         placeholder="2000文字以内で入力してください"
-        :class="[
-          $style.form,
-          { [$style.error]: false }
-        ]"
+        :class="[$style.form, { [$style.error_form]: failed }]"
       />
-    </div>
-    <button
-      :class="[
-        $style.button,
-        $style.button__image
-      ]"
+      <p
+        v-if="failed"
+        :class="$style.error_text"
+      >
+        {{ errors[0] }}
+      </p>
+    </ValidationProvider>
+    <!-- Card Explanation Image field -->
+    <ValidationProvider
+      rules="image"
+      ref="explanationImageValidateProvider"
+      :disabled="true"
+      v-slot="{ validate, errors, failed }"
     >
-      画像を選択
-    </button>
-    <div :class="$style.buttons">
-      <button
+      <img
+        v-if="explanationImage"
+        :src="explanationImage"
+        :class="$style.image"
+      >
+      <label
+        v-if="!explanationImage"
         :class="[
           $style.button,
-          $style.green,
-          { [$style.disabled]: false }
+          $style.button_image,
+          { [$style.button_red]: failed }
         ]"
       >
-        新規作成
+        <input
+          type="file"
+          @change="setExplanationImage($event)"
+        >
+        画像を選択
+      </label>
+      <p
+        v-if="failed"
+        :class="$style.error_text"
+      >
+        {{ errors[0] }}
+      </p>
+      <button
+        v-if="explanationImage"
+        @click="deleteExplanationImageUpload()"
+        :class="[
+          $style.button,
+          $style.button_image,
+          $style.button_red
+        ]"
+      >
+        画像を削除
       </button>
-      <button :class="$style.button">
+    </ValidationProvider>
+    <div :class="$style.buttons">
+      <button
+        @click="$emit('submit')"
+        :class="[$style.button, $style.green]"
+        :disabled="invalid"
+      >
+        <template v-if="$route.path.match('create')">
+          新規作成
+        </template>
+        <template v-if="$route.path.match('update')">
+          更新する
+        </template>
+      </button>
+      <button
+        @click="$emit('cancel')"
+        :class="$style.button"
+      >
         キャンセル
       </button>
     </div>
-  </div>
+  </ValidationObserver>
 </template>
 
 <script>
+import clonedeep from 'lodash.clonedeep'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 export default {
+  props: {
+    question: {
+      type: String,
+      required: true
+    },
+    questionImage: {
+      type: String,
+      required: true
+    },
+    choices: {
+      type: Array,
+      required: true
+    },
+    explanation: {
+      type: String,
+      required: true
+    },
+    explanationImage: {
+      type: String,
+      required: true
+    }
+  },
+  components: {
+    ValidationObserver,
+    ValidationProvider
+  },
   computed: {
     faTrash () {
       return faTrash
     },
     faPlus () {
       return faPlus
+    }
+  },
+  methods: {
+    setChoiceText (text, index) {
+      const choices = clonedeep(this.choices)
+      choices[index].card_choice_text = text
+      this.$emit('update:choices', choices)
+    },
+    setChoiceIsCorrect (correctIndex) {
+      const choices = clonedeep(this.choices)
+      choices.forEach((choice, index) => {
+        choice.card_choice_is_correct =
+          index === correctIndex ? true : false
+      })
+      this.$emit('update:choices', choices)
+    },
+    async setQuestionImage (e) {
+      const { valid } =
+        await this.$refs.questionimageValidateProvider.validate(e)
+      if (!valid || !e.target.files[0]) return false
+      this.$emit('questionImageUpload', { file: e.target.files[0] })
+      const image = await this.createImage(e.target.files[0])
+      this.$emit('update:questionImage', image)
+    },
+    async setExplanationImage (e) {
+      const { valid } =
+        await this.$refs.explanationImageValidateProvider.validate(e)
+      if (!valid || !e.target.files[0]) return false
+      this.$emit('explanationImageUpload', { file: e.target.files[0] })
+      const image = await this.createImage(e.target.files[0])
+      this.$emit('update:explanationImage', image)
+    },
+    deleteQuestionImageUpload () {
+      this.$emit('questionImageUpload', { file: null })
+      this.$emit('update:questionImage', '')
+    },
+    deleteExplanationImageUpload () {
+      this.$emit('explanationImageUpload', { file: null })
+      this.$emit('update:explanationImage', '')
+    },
+    createImage (file) {
+      return new Promise(resolve => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = e => resolve(e.target.result)
+      })
+    },
+    deleteChoice (index) {
+      let choices = clonedeep(this.choices)
+      choices.splice(index, 1)
+      this.$emit('update:choices', choices)
     }
   }
 }
@@ -211,31 +416,45 @@ export default {
   border-radius: 5px;
 }
 
-.form.form__select {
-  height: 80px;
+.form.error_form {
+  border: 1px solid #f6416c;
+  color: #f6416c;
 }
 
-.form.error {
-  border: 1px solid #f6416c;
+.error_text {
+  margin-top: 5px;
+  color: #f6416c;
+}
+
+.form.form_select {
+  height: 80px;
 }
 
 .form::placeholder {
   color: #999;
 }
 
-.select > .group {
-  margin-top: 0;
+.image {
+  max-width: 100%;
+  margin-top: 10px;
 }
 
 .select {
   margin-top: 40px;
+}
+
+.select + .select {
+  margin-top: 10px;
+}
+
+.select_inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.select + .select {
-  margin-top: 10px;
+.select_inner > .group {
+  margin-top: 0;
 }
 
 .correct {
@@ -278,25 +497,39 @@ export default {
   transition: all 0.3s;
 }
 
+.radio:checked + .correct {
+  background-color: #f6416c;
+  pointer-events: none;
+}
+
 .delete {
+  width: 40px;
+  height: 40px;
   margin: 23px 0 0 30px;
   color: #999;
   font-size: 40px;
-  cursor: pointer;
   transition: all 0.3s;
 
   @include mq(tb) {
+    width: 35px;
+    height: 35px;
     font-size: 35px;
     margin: 21px 0 0 25px;
   }
 
   @include mq(sp) {
+    width: 30px;
+    height: 30px;
     font-size: 30px;
     margin: 19px 0 0 15px;
   }
 }
 
-.delete:hover {
+.delete_inner {
+  cursor: pointer;
+}
+
+.delete_inner:hover {
   opacity: 0.7;
   transition: all 0.3s;
 }
@@ -361,18 +594,23 @@ export default {
   color: #fff;
 }
 
-.button.green.disabled {
+.button.green:disabled {
   background-color: #fff;
   color: #999;
   border: 3px solid #999;
   pointer-events: none;
 }
 
-.button.button__image {
+.button.button_image {
   margin-top: 10px;
 }
 
-.button.button__add {
+.button.button_red {
+  border: 3px solid #f6416c;
+  color: #f6416c;
+}
+
+.button.button_add {
   margin-top: 10px;
 }
 
@@ -384,7 +622,7 @@ export default {
   }
 }
 
-.button__add__icon {
+.button_add_icon {
   margin-left: 10px;
 
   @include mq(sp) {

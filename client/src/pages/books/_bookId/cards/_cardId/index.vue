@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="$style.wrap">
     <HeaderBook
       :is-footer="false"
       :is-description="false"
@@ -144,6 +144,11 @@ export default {
 </script>
 
 <style lang="scss" module>
+.wrap {
+  width: 100%;
+  height: 100%;
+}
+
 .question {
   margin-top: 30px;
 }

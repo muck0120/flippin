@@ -1,90 +1,92 @@
 <template>
-  <div :class="$style.wrap">
+  <ValidationObserver
+    v-slot="{ invalid }"
+    tag="div"
+    :class="$style.wrap"
+  >
     <h2 :class="$style.title">
       設定
     </h2>
-    <ValidationObserver v-slot="{ invalid }">
-      <!-- User name field -->
-      <ValidationProvider
-        rules="required|max:20"
-        v-slot="{ errors, failed }"
+    <!-- User name field -->
+    <ValidationProvider
+      rules="required|max:20"
+      v-slot="{ errors, failed }"
+      tag="div"
+      :class="[$style.group, $style.top]"
+    >
+      <p :class="$style.heading">
+        <span>ユーザー名</span>
+        <span
+          :class="[
+            $style.counter,
+            { [$style.error]: failed }
+          ]"
+        >{{ name.length }}/20</span>
+      </p>
+      <input
+        type="text"
+        v-model="name"
+        placeholder="20文字以内で入力してください"
+        :class="[$style.form, { [$style.error_form]: failed }]"
       >
-        <div :class="[$style.group, $style.top]">
-          <p :class="$style.heading">
-            <span>ユーザー名</span>
-            <span
-              :class="[
-                $style.counter,
-                { [$style.error]: failed }
-              ]"
-            >{{ name.length }}/20</span>
-          </p>
-          <input
-            type="text"
-            v-model="name"
-            placeholder="20文字以内で入力してください"
-            :class="[$style.form, { [$style.error_form]: failed }]"
-          >
-          <p
-            v-if="failed"
-            :class="$style.error_text"
-          >
-            {{ errors[0] }}
-          </p>
-        </div>
-      </ValidationProvider>
-      <!-- User mail field -->
-      <ValidationProvider
-        rules="required|email"
-        v-slot="{ errors, failed }"
+      <p
+        v-if="failed"
+        :class="$style.error_text"
       >
-        <div :class="$style.group">
-          <p :class="$style.heading">
-            メールアドレス
-          </p>
-          <input
-            type="text"
-            v-model="mail"
-            placeholder="メールアドレス"
-            :class="[$style.form, { [$style.error_form]: failed }]"
-          >
-        </div>
-        <p
-          v-if="failed"
-          :class="$style.error_text"
-        >
-          {{ errors[0] }}
-        </p>
-      </ValidationProvider>
-      <!-- User password field -->
-      <div :class="$style.group">
-        <p :class="$style.heading">
-          パスワード
-        </p>
-        <input
-          type="password"
-          v-model="password"
-          placeholder="変更する場合のみ入力してください"
-          :class="[$style.form, { [$style.error]: false }]"
-        >
-      </div>
-      <div :class="$style.buttons">
-        <button
-          @click="update()"
-          :class="[$style.button, $style.green]"
-          :disabled="invalid"
-        >
-          変更する
-        </button>
-        <NLink
-          to="/books"
-          tag="button"
-          :class="$style.button"
-        >
-          トップへ戻る
-        </NLink>
-      </div>
-    </ValidationObserver>
+        {{ errors[0] }}
+      </p>
+    </ValidationProvider>
+    <!-- User mail field -->
+    <ValidationProvider
+      rules="required|email"
+      v-slot="{ errors, failed }"
+      tag="div"
+      :class="$style.group"
+    >
+      <p :class="$style.heading">
+        メールアドレス
+      </p>
+      <input
+        type="text"
+        v-model="mail"
+        placeholder="メールアドレス"
+        :class="[$style.form, { [$style.error_form]: failed }]"
+      >
+      <p
+        v-if="failed"
+        :class="$style.error_text"
+      >
+        {{ errors[0] }}
+      </p>
+    </ValidationProvider>
+    <!-- User password field -->
+    <div :class="$style.group">
+      <p :class="$style.heading">
+        パスワード
+      </p>
+      <input
+        type="password"
+        v-model="password"
+        placeholder="変更する場合のみ入力してください"
+        :class="[$style.form, { [$style.error]: false }]"
+      >
+    </div>
+    <div :class="$style.buttons">
+      <button
+        @click="update()"
+        :class="[$style.button, $style.green]"
+        :disabled="invalid"
+      >
+        変更する
+      </button>
+      <NLink
+        to="/books"
+        tag="button"
+        :class="$style.button"
+      >
+        トップへ戻る
+      </NLink>
+    </div>
     <Modal
       v-if="isOpenModal"
       @close="isOpenModal = false"
@@ -99,7 +101,7 @@
         <ModalButtonOne @proceed="isOpenModal = false" />
       </template>
     </Modal>
-  </div>
+  </ValidationObserver>
 </template>
 
 <script>

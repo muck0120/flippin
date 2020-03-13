@@ -61,7 +61,7 @@ export default {
       const url = process.env.BASE_URL_ASSETS
       const cardId = this.cardId
       const filename = this.card.card_question_image
-      return `${url}/images/cards/${cardId}/${filename}`
+      return `${url}/images/cards/${this.card.card_id}/${filename}`
     },
     bookId () {
       return this.$route.params.bookId

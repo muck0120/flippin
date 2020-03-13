@@ -45,7 +45,7 @@ export default {
       const url = process.env.BASE_URL_ASSETS
       const cardId = this.cardId
       const filename = this.card.card_explanation_image
-      return `${url}/images/cards/${cardId}/${filename}`
+      return `${url}/images/cards/${this.card.card_id}/${filename}`
     },
     ...mapState('card', ['card'])
   }
@@ -56,7 +56,7 @@ export default {
 .answer {
   display: flex;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .answer__label {

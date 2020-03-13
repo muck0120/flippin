@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CardRequest;
 use App\Http\Requests\CardOrderRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Book;
 use App\Models\Card;
 
@@ -116,6 +117,7 @@ class CardController extends Controller
             'card_id' => $cardId,
             'book_id' => $bookId
         ])->firstOrFail();
+        Storage::deleteDirectory('public/images/cards/'.$card->card_id);
         $card->delete();
         return response()->json(['message' => 'Deleted.'], 200);
     }

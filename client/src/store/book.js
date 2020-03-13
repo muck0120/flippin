@@ -97,7 +97,7 @@ export const actions = {
       return e.response.status
     }
   },
-  async deleteBook (context, { bookId }) {
+  async deleteBook ({}, { bookId }) {
     try {
       const { status } = await this.$axios.delete(`/books/${bookId}`)
       return status

@@ -23,7 +23,7 @@ class CardRequest extends ApiRequest
     {
         return [
             'card_question' => ['required', 'max:2000'],
-            'card_question_image' => ['image', 'file'],
+            'card_question_image' => ['nullable', 'image', 'file'],
             'card_choices' => [
                 'required', 'array', 'min:2', function ($attr, $values, $fail) {
                     $collection = array_map(function ($value) {
@@ -41,7 +41,7 @@ class CardRequest extends ApiRequest
             'card_choices.*.card_choice_text' => ['required', 'max:200'],
             'card_choices.*.card_choice_is_correct' => ['required', 'boolean'],
             'card_explanation' => ['max:2000'],
-            'card_explanation_image' => ['image', 'file']
+            'card_explanation_image' => ['nullable', 'image', 'file']
         ];
     }
 }
