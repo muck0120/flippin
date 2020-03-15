@@ -143,6 +143,16 @@ describe('store/book.js', () => {
           data: { book: book }
         }
         axios.get.mockResolvedValue(response)
+
+        const cardMockStore = {
+          namespaced: true,
+          state: { cards: [], card: null },
+          mutations: {
+            setCards: (state, cards) => state.cards = cards,
+            setCard: (state, card) => state.card = card
+          }
+        }
+        store.registerModule('card', cardMockStore)
       })
 
       test('book ステートに book がセットされる', async () => {
