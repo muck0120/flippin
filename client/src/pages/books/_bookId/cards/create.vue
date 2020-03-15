@@ -43,7 +43,6 @@ import Modal from '@/components/Modal'
 import ModalButtonOne from '@/components/ModalButtonOne'
 
 const choice = {
-  card_choice_id: null,
   card_choice_text: '',
   card_choice_is_correct: false
 }

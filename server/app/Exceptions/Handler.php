@@ -60,6 +60,10 @@ class Handler extends ExceptionHandler
             return redirect('/notfound');
         }
 
+        if ($exception instanceof FileNotFoundException) {
+            return redirect('/notfound');
+        }
+
         return parent::render($request, $exception);
     }
 }

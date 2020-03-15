@@ -11,6 +11,15 @@ use App\Models\Card;
 
 class CardController extends Controller
 {
+    public function getImageFile($cardId, $fileName)
+    {
+        $path = 'public/images/cards/'.$cardId.'/'.$fileName;
+        $mimeType = Storage::mimeType($path);
+        $imageFile = Storage::get($path);
+        $headers = ['Content-Type' => $mimeType];
+        return response()->make($imageFile, 200, $headers);
+    }
+
     /**
      * 新規問題の作成。
      *
@@ -73,7 +82,9 @@ class CardController extends Controller
             'card_explanation' => $request->card_explanation
         ])->save();
 
-        $card->updateCardChoices($request->card_choices);
+        $card->choices()->delete();
+        $card->choices()->createMany($request->card_choices);
+
         $card->updateQuestionImage($request);
         $card->updateExplanationImage($request);
 

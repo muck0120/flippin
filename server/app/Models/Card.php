@@ -53,36 +53,6 @@ class Card extends Model
     }
 
     /**
-     * 選択肢の更新。card_choice_idを指定した場合はupdate、それ以外はcreate。
-     *
-     * @param array $choices
-     * @return void
-     */
-    public function updateCardChoices($choices)
-    {
-        $requestIds = collect($choices)->pluck('card_choice_id');
-        $existedIds = $this->choices()->where('card_id', $this->card_id)->pluck('card_choice_id');
-
-        $diffIds = $existedIds->diff($requestIds)->all();
-        $this->choices()->whereIn('card_choice_id', $diffIds)->delete();
-
-        foreach ($choices as $choice) {
-            $cardChoiceId = isset($choice['card_choice_id']) ? $choice['card_choice_id'] : null;
-            $this->choices()->updateOrCreate(
-                [
-                    'card_choice_id' => $cardChoiceId,
-                    'card_id' => $this->card_id
-                ],
-                [
-                    'card_id' => $this->card_id,
-                    'card_choice_text' => $choice['card_choice_text'],
-                    'card_choice_is_correct' => $choice['card_choice_is_correct']
-                ]
-            );
-        }
-    }
-
-    /**
      * 質問文画像の更新。
      *
      * @param \App\Http\Requests\CardRequest

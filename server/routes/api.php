@@ -6,6 +6,8 @@ Route::post('/users/profile', 'UserController@createUser');
 Route::get('/books/{bookId}', 'BookController@getBook');
 Route::get('/books/{bookGroup}', 'BookController@getBooks');
 
+Route::get('/cards/{cardId}/{fileName}', 'CardController@getImageFile');
+
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/logout', 'UserController@logout');
     Route::get('/users/profile', 'UserController@getProfile');

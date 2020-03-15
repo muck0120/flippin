@@ -312,6 +312,13 @@ export default {
       const image = await this.createImage(e.target.files[0])
       this.$emit('update:explanationImage', image)
     },
+    createImage (file) {
+      return new Promise(resolve => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = e => resolve(e.target.result)
+      })
+    },
     deleteQuestionImageUpload () {
       this.$emit('questionImageUpload', { file: null })
       this.$emit('update:questionImage', '')
@@ -320,15 +327,11 @@ export default {
       this.$emit('explanationImageUpload', { file: null })
       this.$emit('update:explanationImage', '')
     },
-    createImage (file) {
-      return new Promise(resolve => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = e => resolve(e.target.result)
-      })
-    },
     deleteChoice (index) {
       let choices = clonedeep(this.choices)
+      if (choices[index].card_choice_is_correct) {
+        choices[index - 1].card_choice_is_correct = true
+      }
       choices.splice(index, 1)
       this.$emit('update:choices', choices)
     }

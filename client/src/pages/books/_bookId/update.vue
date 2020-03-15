@@ -62,7 +62,7 @@ export default {
   },
   head () {
     return {
-      title: '新規問題集の作成'
+      title: '問題集の更新'
     }
   },
   middleware: ['authenticated'],
