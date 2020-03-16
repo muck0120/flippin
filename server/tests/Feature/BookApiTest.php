@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Book;
+use App\Models\Card;
 use App\Models\Favorite;
 
 class BookApiTest extends TestCase
@@ -83,7 +84,7 @@ class BookApiTest extends TestCase
      * @dataProvider dataproviderFailCreateBook
      * @param string $title
      * @param string $desc
-     * @param string $isPublish
+     * @param boolean $isPublish
      * @return void
      */
     public function testFailCreateBook($title, $desc, $isPublish)
@@ -335,7 +336,7 @@ class BookApiTest extends TestCase
     }
 
     /**
-     * [単体取得]未ログインで「公開」問題集が取得できることをテスト。
+     * [単体取得]未ログインで「公開」かつ「問題あり」の問題集が取得できることをテスト。
      *
      * @return void
      */
@@ -344,6 +345,10 @@ class BookApiTest extends TestCase
         $createBook = factory(Book::class)->create([
             'user_id' => $this->user->user_id,
             'book_is_publish' => true
+        ]);
+        factory(Card::class)->create([
+            'card_order' => 1,
+            'book_id' => $createBook->book_id
         ]);
 
         $createBookId = $createBook->book_id;
@@ -387,6 +392,10 @@ class BookApiTest extends TestCase
         $createBook = factory(Book::class)->create([
             'user_id' => $this->user->user_id,
             'book_is_publish' => true
+        ]);
+        factory(Card::class)->create([
+            'card_order' => 1,
+            'book_id' => $createBook->book_id
         ]);
 
         $createBookId = $createBook->book_id;
@@ -497,6 +506,10 @@ class BookApiTest extends TestCase
             $books[$key] = factory(Book::class)->create([
                 'user_id' => $value['createdBy']->user_id,
                 'book_is_publish' => $value['isPublish']
+            ]);
+            factory(Card::class)->create([
+                'card_order' => 1,
+                'book_id' => $books[$key]->book_id
             ]);
             if (!is_null($value['favoriteBy'])) {
                 factory(Favorite::class)->create([

@@ -11,6 +11,13 @@ use App\Models\Card;
 
 class CardController extends Controller
 {
+    /**
+     * 画像ファイルの取得。
+     *
+     * @param integer $cardId
+     * @param string $fileName
+     * @return \Illuminate\Http\Response
+     */
     public function getImageFile($cardId, $fileName)
     {
         $path = 'public/images/cards/'.$cardId.'/'.$fileName;
