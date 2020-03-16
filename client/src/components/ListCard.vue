@@ -1,12 +1,21 @@
 <template>
   <NLink
-    :to="`/books/${card.book_id}/cards/${card.card_id}`"
-    :class="$style.wrap"
+    :to="to"
+    :class="[
+      $style.wrap,
+      { [$style.choiced]: isChoiced }
+    ]"
   >
-    <div :class="$style.number">
+    <div :class="[
+      $style.number,
+      { [$style.choiced]: isChoiced }
+    ]">
       {{ index + 1 }}
     </div>
-    <p :class="$style.title">
+    <p :class="[
+      $style.title,
+      { [$style.choiced]: isChoiced }
+    ]">
       {{ card.card_question }}
     </p>
   </NLink>
@@ -22,6 +31,20 @@ export default {
     card: {
       type: Object,
       required: true
+    },
+    isChoiced: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
+  },
+  computed: {
+    to () {
+      if (!this.$route.path.match('exam')) {
+        return `/books/${this.card.book_id}/cards/${this.card.card_id}`
+      } else {
+        return `/books/${this.card.book_id}/exam/${this.card.card_id}`
+      }
     }
   }
 }
@@ -51,6 +74,10 @@ $height: 50px;
   @include mq(sp) {
     padding-right: 30px;
   }
+}
+
+.wrap.choiced {
+  border: 3px solid #999;
 }
 
 .wrap::after {
@@ -86,6 +113,10 @@ $height: 50px;
   }
 }
 
+.wrap.choiced::after {
+  background-image: url('~assets/images/arrow-gray.svg');
+}
+
 .wrap:hover::after {
   transform: translateX(5px);
   transition: all 0.3s;
@@ -112,6 +143,10 @@ $height: 50px;
   }
 }
 
+.number.choiced {
+  background-color: #999;
+}
+
 .title {
   width: 100%;
   margin-left: 15px;
@@ -122,5 +157,9 @@ $height: 50px;
   @include mq(tb) {
     margin-left: 10px;
   }
+}
+
+.title.choiced {
+  color: #999;
 }
 </style>

@@ -1,35 +1,84 @@
 <template>
   <div :class="$style.wrap">
     <HeaderBook
-      title="AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1"
-      desc="ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。"
       :is-footer="false"
+      :back-to="''"
     />
     <div :class="$style.cards">
       <div
-        v-for="n in 10"
-        :key="n"
+        v-for="(card, index) in sortedCards"
+        :key="card.card_id"
         :class="$style.card"
       >
-        <ListCard />
+        <ListCard
+          :index="index"
+          :card="card"
+          :isChoiced="isChoiced(card.card_id)"
+        />
       </div>
     </div>
     <div :class="$style.buttons">
-      <FooterCardButtons />
+      <FooterCardButtons
+        :prevTo="''"
+        :nextTo="''"
+        :compTo="`/books/${book.book_id}/exam/result`"
+        :class="$style.buttons"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import clonedeep from 'lodash.clonedeep'
 import HeaderBook from '@/components/TheHeaderBook.vue'
 import ListCard from '@/components/ListCard.vue'
 import FooterCardButtons from '@/components/TheFooterCardButtons.vue'
 
 export default {
+  validate ({ params }) {
+    return /^\d+$/.test(params.bookId)
+  },
+  async asyncData ({ store, params, error }) {
+    const status = await store.dispatch(
+      'book/fetchBook', { bookId: params.bookId }
+    )
+    if (status !== 200) error(status, 'error')
+  },
+  created () {
+    this.$store.dispatch('exam/fetchExam')
+  },
+  head () {
+    return {
+      title: `テスト | ${this.book.book_title}`
+    }
+  },
   components: {
     HeaderBook,
     ListCard,
     FooterCardButtons
+  },
+  computed: {
+    sortedCards () {
+      let cards = clonedeep(this.cards)
+      cards = this.exam.map(item => {
+        let value
+        cards.forEach(card => {
+          if (card.card_id === item.cardId) value = card
+        })
+        return value
+      })
+      return cards
+    },
+    ...mapState('book', ['book']),
+    ...mapState('card', ['cards']),
+    ...mapState('exam', ['exam'])
+  },
+  methods: {
+    isChoiced (cardId) {
+      const target = this.exam.find(exam => exam.cardId === cardId)
+      return Boolean(target.choicedId)
+    }
   }
 }
 </script>

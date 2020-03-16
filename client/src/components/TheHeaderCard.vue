@@ -4,7 +4,10 @@
       <h2 :class="$style.title">
         問題{{ cardIndex + 1 }}
       </h2>
-      <template v-if="user && user.user_id === book.user_id">
+      <template v-if="
+        user && user.user_id === book.user_id &&
+        !this.$route.path.match('exam')
+      ">
         <NLink
           :to="`/books/${bookId}/cards/${cardId}/update`"
           :class="$style.icon"
@@ -30,12 +33,17 @@
     <span :class="$style.border"><!-- border --></span>
     <label
       v-for="choice in choices"
-      :key="choice.choice_id"
+      :key="choice.card_choice_id"
+      @click="storeChoicedId(choice.card_choice_id)"
       :class="$style.choice"
     >
       <input
         type="radio"
         name="choice"
+        :checked="
+          $route.path.match('exam') &&
+          choicedId === choice.card_choice_id
+        "
         :class="$style.check"
       >
       <p :class="$style.text">
@@ -47,6 +55,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import clonedeep from 'lodash.clonedeep'
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 export default {
@@ -70,14 +79,38 @@ export default {
       return this.$route.params.cardId
     },
     cardIndex () {
-      return this.cards.findIndex(card => card === this.card)
+      if (!this.$route.path.match('exam')) {
+        return this.cards.findIndex(card => card === this.card)
+      } else {
+        return this.exam.findIndex(item => item.cardId === this.card.card_id)
+      }
     },
     choices () {
       return this.card.card_choices
     },
+    choicedId () {
+      if (process.server) return
+      const choiced = this.exam.find(item => item.cardId === this.card.card_id)
+      return choiced.choicedId
+    },
     ...mapState('user', ['user']),
     ...mapState('book', ['book']),
-    ...mapState('card', ['cards', 'card'])
+    ...mapState('card', ['cards', 'card']),
+    ...mapState('exam', ['exam'])
+  },
+  methods: {
+    storeChoicedId (choicedId) {
+      if (!this.$route.path.match('exam')) return false
+      let exam = clonedeep(this.exam)
+      exam = exam.map(item => {
+        if (item.cardId === this.card.card_id) {
+          return { cardId: item.cardId, choicedId: choicedId }
+        } else {
+          return item
+        }
+      })
+      this.$store.dispatch('exam/storeExam', { exam })
+    }
   }
 }
 </script>

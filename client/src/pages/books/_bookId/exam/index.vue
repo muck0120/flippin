@@ -1,41 +1,98 @@
 <template>
   <div>
-    <HeaderBook
-      title="AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1"
-      desc="ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。"
-      :is-footer="false"
-    />
+   <HeaderBook :is-footer="false" />
     <h2 :class="$style.title">
       このテストを開始しますか？
     </h2>
     <div :class="$style.check">
       <label>
-        <input type="checkbox" :class="$style.check__box">
-        <span :class="$style.check__text">ランダム形式で出題</span>
+        <input
+          type="checkbox"
+          v-model="isRandom"
+          :class="$style.check_box"
+        >
+        <span :class="$style.check_text">
+          ランダム形式で出題
+        </span>
       </label>
     </div>
     <div :class="$style.buttons">
-      <button :class="[$style.button, $style.red]">
+      <button
+        @click="startExam()"
+        :class="[$style.button, $style.red]"
+      >
         スタート
         <img
           src="@/assets/images/arrow-white.svg"
-          alt=""
           :class="$style.icon"
         >
       </button>
-      <button :class="$style.button">
+      <NLink
+        :to="`/books/${book.book_id}/cards`"
+        :class="$style.button"
+      >
         キャンセル
-      </button>
+      </NLink>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import clonedeep from 'lodash.clonedeep'
 import HeaderBook from '@/components/TheHeaderBook.vue'
 
 export default {
+  validate ({ params }) {
+    return /^\d+$/.test(params.bookId)
+  },
+  async asyncData ({ store, params, error }) {
+    const status = await store.dispatch(
+      'book/fetchBook', { bookId: params.bookId }
+    )
+    if (status !== 200) error(status, 'error')
+  },
+  head () {
+    return {
+      title: `テスト開始 | ${this.book.book_title}`
+    }
+  },
   components: {
     HeaderBook
+  },
+  data () {
+    return {
+      isRandom: false
+    }
+  },
+  computed: {
+    ...mapState('book', ['book']),
+    ...mapState('card', ['cards'])
+  },
+  methods: {
+    startExam () {
+      let exam = clonedeep(this.cards)
+      if (!this.isRandom) {
+        exam = exam.map(card => {
+          return { cardId: card.card_id, choicedId: null }
+        })
+      } else {
+        exam = this.shuffle(exam).map(card => {
+          return { cardId: card.card_id, choicedId: null }
+        })
+      }
+      this.$store.dispatch('exam/storeExam', { exam })
+      this.$router.push(`/books/${this.book.book_id}/exam/${exam[0].cardId}`)
+    },
+    shuffle (array) {
+      for(var i = array.length - 1; i > 0; i--){
+          var r = Math.floor(Math.random() * (i + 1))
+          var tmp = array[i]
+          array[i] = array[r]
+          array[r] = tmp
+      }
+      return array
+    }
   }
 }
 </script>
@@ -71,7 +128,7 @@ export default {
   }
 }
 
-.check__text {
+.check_text {
   padding-left: 30px;
   font-size: 18px;
   font-weight: bold;
@@ -89,7 +146,7 @@ export default {
   }
 }
 
-.check__text::before {
+.check_text::before {
   $square-pc: 25px;
   $square-tb: 22px;
   $square-sp: 19px;
@@ -120,7 +177,7 @@ export default {
   }
 }
 
-.check__box:checked + .check__text::before {
+.check_box:checked + .check_text::before {
   background-image: url('~assets/images/check-on.svg');
   transition: all 0.3s;
 }
