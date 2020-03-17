@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="$style.wrap">
    <HeaderBook :is-footer="false" />
     <h2 :class="$style.title">
       このテストを開始しますか？
@@ -98,6 +98,11 @@ export default {
 </script>
 
 <style lang="scss" module>
+.wrap {
+  width: 100%;
+  height: 100%;
+}
+
 .title {
   font-size: 40px;
   font-weight: bold;

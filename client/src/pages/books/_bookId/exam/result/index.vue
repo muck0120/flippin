@@ -1,62 +1,133 @@
 <template>
   <div :class="$style.wrap">
     <HeaderBook
-      title="AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1、AWS問題集その1"
-      desc="ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。ここに説明が入ります。"
       :is-footer="false"
+      :back-to="''"
     />
-    <p :class="$style.desc">
-      お疲れさまでした！あなたの点数は…<br>
-      23/50問中（正解率45.3%）でした。
-    </p>
+    <client-only>
+      <p :class="$style.desc">
+        お疲れさまでした！あなたの点数は…<br>
+        {{ correctNumber }}/{{ totalNumber }}問中（正解率{{ correctRate }}%）でした。
+      </p>
+    </client-only>
     <div :class="$style.cards">
       <div
-        v-for="n in 10"
-        :key="n"
+        v-for="(card, index) in sortedCards"
+        :key="card.card_id"
         :class="$style.card"
       >
-        <div
-          v-if="true"
-          :class="$style.result"
-        >
+        <div :class="$style.result">
           <img
-            v-if="true"
+            v-if="isCorrect(card)"
             src="@/assets/images/result-correct.svg"
             alt="正解"
           >
           <img
-            v-if="false"
+            v-else-if="!isCorrect(card)"
             src="@/assets/images/result-incorrect.svg"
             alt="不正解"
           >
         </div>
-        <ListCard />
+        <ListCard
+          :to="`/books/${book.book_id}/exam/result/${card.card_id}`"
+          :index="index"
+          :card="card"
+          :isIncorrect="!isCorrect(card)"
+        />
       </div>
     </div>
     <div :class="$style.buttons">
-      <button
-        :class="[
-          $style.button,
-          $style.green
-        ]"
+      <NLink
+        :to="`/books/${book.book_id}/cards`"
+        :class="[$style.button, $style.green]"
       >
         問題一覧へ戻る
-      </button>
-      <button :class="$style.button">
+      </NLink>
+      <NLink
+        :to="`/books/${book.book_id}/exam`"
+        :class="$style.button"
+      >
         もう一度チャレンジ
-      </button>
+      </NLink>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import clonedeep from 'lodash.clonedeep'
 import HeaderBook from '@/components/TheHeaderBook.vue'
 import ListCard from '@/components/ListCard.vue'
 
 export default {
+  validate ({ params }) {
+    return /^\d+$/.test(params.bookId)
+  },
+  async asyncData ({ store, params, error }) {
+    const status = await store.dispatch(
+      'book/fetchBook', { bookId: params.bookId }
+    )
+    if (status !== 200) error(status, 'error')
+  },
+  created () {
+    this.$examGateway()
+  },
+  head () {
+    return {
+      title: `テスト結果 | ${this.book.book_title}`
+    }
+  },
   components: {
     HeaderBook,
     ListCard
+  },
+  computed: {
+    sortedCards () {
+      let cards = clonedeep(this.cards)
+      cards = this.exam.map(item => {
+        let value
+        cards.forEach(card => {
+          if (card.card_id === item.cardId) value = card
+        })
+        return value
+      })
+      return cards
+    },
+    totalNumber () {
+      return this.sortedCards.length
+    },
+    correctNumber () {
+      if (process.server) return 0
+      const exams = clonedeep(this.exam)
+      const correctCards = this.cards.filter(card => {
+        const { choicedId: choicedId } =
+          exams.find(exam => exam.cardId === card.card_id)
+        const { card_choice_id: correctId } =
+          card.card_choices.find(choice => choice.card_choice_is_correct)
+        return choicedId === correctId
+      })
+      return correctCards.length
+    },
+    correctRate () {
+      if (process.server) return 0
+      const rate = this.correctNumber / this.totalNumber * 100
+      return rate.toFixed(1)
+    },
+    ...mapState('book', ['book']),
+    ...mapState('card', ['cards']),
+    ...mapState('exam', ['exam'])
+  },
+  methods: {
+    isCorrect (card) {
+      const exams = clonedeep(this.exam)
+      const choiced = exams.find(exam => {
+        return exam.cardId === card.card_id
+      })
+      const matched = card.card_choices.find(choice => {
+        return choice.card_choice_id === choiced.choicedId
+      })
+      return Boolean(matched ? matched.card_choice_is_correct : false)
+    }
   }
 }
 </script>
@@ -69,7 +140,7 @@ export default {
 
 .desc {
   margin-top: 50px;
-  font-size: 40px;
+  font-size: 30px;
   font-weight: bold;
   line-height: 1.3;
   text-align: center;
@@ -86,7 +157,7 @@ export default {
 }
 
 .cards {
-  margin-top: 30px;
+  margin-top: 50px;
 }
 
 .card {
@@ -123,18 +194,21 @@ export default {
 }
 
 .buttons {
-  margin-top: 50px;
-  width: 100%;
+  width: 1000px;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: fixed;
+  bottom: 30px;
 
   @include mq(tb) {
-    margin-top: 40px;
+    width: calc(100% - 40px);
+    bottom: 20px;
   }
 
   @include mq(sp) {
-    margin-top: 30px;
+    width: calc(100% - 20px);
+    bottom: 20px;
   }
 }
 
@@ -152,7 +226,7 @@ export default {
   justify-content: center;
   align-items: center;
   color: #00b8a9;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   transition: all 0.3s;
   white-space: nowrap;

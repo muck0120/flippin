@@ -38,7 +38,8 @@ export default {
   plugins: [
     '@/plugins/axios',
     '@/plugins/vee-validate',
-    { src: '@/plugins/infinite-loading', ssr: false }
+    '@/plugins/exam-gateway',
+    { src: '@/plugins/infinite-loading', mode: 'client' }
   ],
   /*
   ** Nuxt.js dev-modules

@@ -28,6 +28,7 @@
               <fa :icon="faSort" />
             </div>
             <ListCard
+              :to="`/books/${book.book_id}/cards/${card.card_id}`"
               :index="index"
               :card="card"
             />

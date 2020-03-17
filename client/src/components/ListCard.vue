@@ -3,18 +3,21 @@
     :to="to"
     :class="[
       $style.wrap,
-      { [$style.choiced]: isChoiced }
+      { [$style.choiced]: isChoiced },
+      { [$style.correct]: isIncorrect }
     ]"
   >
     <div :class="[
       $style.number,
-      { [$style.choiced]: isChoiced }
+      { [$style.choiced]: isChoiced },
+      { [$style.correct]: isIncorrect }
     ]">
       {{ index + 1 }}
     </div>
     <p :class="[
       $style.title,
-      { [$style.choiced]: isChoiced }
+      { [$style.choiced]: isChoiced },
+      { [$style.correct]: isIncorrect }
     ]">
       {{ card.card_question }}
     </p>
@@ -24,6 +27,10 @@
 <script>
 export default {
   props: {
+    to: {
+      type: String,
+      required: true
+    },
     index: {
       type: Number,
       required: true
@@ -36,15 +43,11 @@ export default {
       type: Boolean,
       required: false,
       default: false
-    }
-  },
-  computed: {
-    to () {
-      if (!this.$route.path.match('exam')) {
-        return `/books/${this.card.book_id}/cards/${this.card.card_id}`
-      } else {
-        return `/books/${this.card.book_id}/exam/${this.card.card_id}`
-      }
+    },
+    isIncorrect: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   }
 }
@@ -78,6 +81,10 @@ $height: 50px;
 
 .wrap.choiced {
   border: 3px solid #999;
+}
+
+.wrap.correct {
+  border: 3px solid #f6416c;
 }
 
 .wrap::after {
@@ -117,6 +124,10 @@ $height: 50px;
   background-image: url('~assets/images/arrow-gray.svg');
 }
 
+.wrap.correct::after {
+  background-image: url('~assets/images/arrow-red.svg');
+}
+
 .wrap:hover::after {
   transform: translateX(5px);
   transition: all 0.3s;
@@ -147,6 +158,10 @@ $height: 50px;
   background-color: #999;
 }
 
+.number.correct {
+  background-color: #f6416c;
+}
+
 .title {
   width: 100%;
   margin-left: 15px;
@@ -161,5 +176,9 @@ $height: 50px;
 
 .title.choiced {
   color: #999;
+}
+
+.title.correct {
+  color: #f6416c;
 }
 </style>

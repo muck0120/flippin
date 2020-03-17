@@ -36,7 +36,7 @@ export default {
     if (status !== 200) error(status, 'error')
   },
   created () {
-    this.$store.dispatch('exam/fetchExam')
+    this.$examGateway()
   },
   head () {
     return {

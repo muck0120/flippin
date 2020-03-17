@@ -1,8 +1,36 @@
 <template>
   <div :class="$style.wrap">
     <div :class="$style.header">
-      <h2 :class="$style.title">
+      <h2
+        v-if="!$route.path.match('exam/result')"
+        :class="$style.title"
+      >
         問題{{ cardIndex + 1 }}
+      </h2>
+      <h2
+        v-else-if="$route.path.match('exam/result')"
+        :class="[$style.title, $style.result]"
+      >
+        <client-only>
+          <img
+            v-if="choicedId === correctId"
+            src="@/assets/images/result-correct.svg"
+            alt="正解"
+            :class="$style.result_icon"
+          >
+          <img
+            v-else-if="choicedId !== correctId"
+            src="@/assets/images/result-incorrect.svg"
+            alt="不正解"
+            :class="$style.result_icon"
+          >
+          <span :class="[
+            $style.result_title,
+            { [$style.red]: choicedId !== correctId }
+          ]">
+            問題{{ cardIndex + 1 }}
+          </span>
+        </client-only>
       </h2>
       <template v-if="
         user && user.user_id === book.user_id &&
@@ -35,7 +63,12 @@
       v-for="choice in choices"
       :key="choice.card_choice_id"
       @click="storeChoicedId(choice.card_choice_id)"
-      :class="$style.choice"
+      :class="[
+        $style.choice,
+        { [$style.disabled]: $route.path.match('exam/result') },
+        { [$style.choiced]: $route.path.match('exam/result') &&
+          choicedId === choice.card_choice_id }
+      ]"
     >
       <input
         type="radio"
@@ -92,6 +125,10 @@ export default {
       if (process.server) return
       const choiced = this.exam.find(item => item.cardId === this.card.card_id)
       return choiced.choicedId
+    },
+    correctId () {
+      const correct = this.choices.find(choice => choice.card_choice_is_correct)
+      return correct.card_choice_id
     },
     ...mapState('user', ['user']),
     ...mapState('book', ['book']),
@@ -150,6 +187,33 @@ export default {
   @include mq(sp) {
     font-size: 16px;
   }
+}
+
+.title.result {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.result_icon {
+  width: auto;
+  height: 25px;
+
+  @include mq(tb) {
+    height: 20px;
+  }
+
+  @include mq(sp) {
+    height: 20px;
+  }
+}
+
+.result_title {
+  margin-left: 10px;
+}
+
+.result_title.red {
+  color: #f6416c;
 }
 
 .icon {
@@ -233,6 +297,14 @@ export default {
 .choice {
   display: block;
   cursor: pointer;
+}
+
+.choice.disabled {
+  pointer-events: none;
+}
+
+.choice.choiced {
+  font-weight: bold;
 }
 
 .choice + .choice {

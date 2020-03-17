@@ -11,6 +11,7 @@
         :class="$style.card"
       >
         <ListCard
+          :to="`/books/${book.book_id}/exam/${card.card_id}`"
           :index="index"
           :card="card"
           :isChoiced="isChoiced(card.card_id)"
@@ -46,7 +47,7 @@ export default {
     if (status !== 200) error(status, 'error')
   },
   created () {
-    this.$store.dispatch('exam/fetchExam')
+    this.$examGateway()
   },
   head () {
     return {
