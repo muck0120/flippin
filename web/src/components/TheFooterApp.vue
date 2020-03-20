@@ -4,10 +4,14 @@
       <fa :icon="faCopyright" :class="$style.copyright__icon" />
       <span :class="$style.copyright__text">2020 Flippin</span>
     </small>
-    <NLink to="https://twitter.com/flippin" :class="$style.contact">
+    <a
+      href="https://twitter.com/flippin200320"
+      target="_blank"
+      :class="$style.contact"
+    >
       <span :class="$style.contact__text">Contact Us</span>
       <fa :icon="faExternalLinkAlt" :class="$style.copyright__icon" />
-    </NLink>
+    </a>
   </div>
 </template>
 
