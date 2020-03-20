@@ -243,6 +243,9 @@ export default {
 }
 
 .author {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
   font-size: 16px;
   font-style: normal;
 
@@ -257,11 +260,12 @@ export default {
 
 .name {
   font-weight: bold;
+  margin-left: 5px;
 }
 
 .private {
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
   align-items: center;
 }
 

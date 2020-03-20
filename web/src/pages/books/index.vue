@@ -11,7 +11,7 @@
         :to="{ path: '/books', query: { tab: 'others' } }"
         :class="[$style.menu, { [$style.active]: tabIsOthers }]"
       >
-        みんなの問題集
+        シェア問題集
       </NLink>
       <NLink
         :to="{ path: '/books', query: { tab: 'favorites' } }"

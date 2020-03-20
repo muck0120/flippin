@@ -34,6 +34,7 @@ export default {
   color: #fff;
   font-size: 36px;
   text-align: center;
+  white-space: nowrap;
 
   @include mq(tb) {
     font-size: 30px;
