@@ -138,7 +138,7 @@
         {{ errors[0] }}
       </p>
     </ValidationProvider>
-    <button
+    <div
       @click="$emit('addChoice')"
       :class="[$style.button, $style.button_add]"
     >
@@ -147,7 +147,7 @@
         :icon="faPlus"
         :class="$style.button_add_icon"
       />
-    </button>
+    </div>
     <!-- Card Explanation field -->
     <ValidationProvider
       rules="max:2000"
@@ -571,6 +571,7 @@ export default {
   font-weight: bold;
   transition: all 0.3s;
   white-space: nowrap;
+  cursor: pointer;
 
   @include mq(tb) {
     width: 180px;

@@ -139,6 +139,7 @@ export default {
   font-weight: bold;
   position: relative;
   transition: all 0.3s;
+  white-space: nowrap;
 
   @include mq(tb) {
     padding-left: 27px;

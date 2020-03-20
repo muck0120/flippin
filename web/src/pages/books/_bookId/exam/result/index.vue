@@ -229,6 +229,7 @@ export default {
   font-size: 16px;
   font-weight: bold;
   transition: all 0.3s;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.15);
   white-space: nowrap;
 
   @include mq(tb) {
