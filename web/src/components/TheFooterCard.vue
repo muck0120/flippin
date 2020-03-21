@@ -6,18 +6,23 @@
         :class="$style.answer_text"
       >{{ correctChoice.card_choice_text }}</p>
     </div>
-    <span :class="$style.border"><!-- border --></span>
-    <h3 :class="$style.comment_label">
-      解説
-    </h3>
-    <p
-      :class="$style.comment_text"
-    >{{ card.card_explanation }}</p>
-    <img
-      v-if="card.card_explanation_image"
-      :src="imageUrl"
-      :class="$style.image"
+    <template v-if="
+      card.card_explanation ||
+      card.card_explanation_image"
     >
+      <span :class="$style.border"><!-- border --></span>
+      <h3 :class="$style.comment_label">
+        解説
+      </h3>
+      <p
+        :class="$style.comment_text"
+      >{{ card.card_explanation }}</p>
+      <img
+        v-if="card.card_explanation_image"
+        :src="imageUrl"
+        :class="$style.image"
+      >
+    </template>
   </Accordion>
 </template>
 
