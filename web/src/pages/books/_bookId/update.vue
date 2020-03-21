@@ -55,7 +55,7 @@ export default {
       form: {
         bookId: book.book_id,
         title: book.book_title,
-        desc: book.book_desc,
+        desc: book.book_desc || '',
         isPublish: book.book_is_publish
       }
     }
