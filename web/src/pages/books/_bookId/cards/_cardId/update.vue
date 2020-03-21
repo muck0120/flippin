@@ -76,7 +76,7 @@ export default {
         questionImage: '',
         questionImageUpload: null,
         choices: card.card_choices,
-        explanation: card.card_explanation,
+        explanation: card.card_explanation || '',
         explanationImage: '',
         explanationImageUpload: null
       }
