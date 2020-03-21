@@ -1,18 +1,18 @@
 <template>
   <Accordion>
     <div :class="$style.answer">
-      <span :class="$style.answer__label">正解</span>
-      <p :class="$style.answer__text">
-        {{ correctChoice.card_choice_text }}
-      </p>
+      <span :class="$style.answer_label">正解</span>
+      <p
+        :class="$style.answer_text"
+      >{{ correctChoice.card_choice_text }}</p>
     </div>
     <span :class="$style.border"><!-- border --></span>
-    <h3 :class="$style.comment__label">
+    <h3 :class="$style.comment_label">
       解説
     </h3>
-    <p :class="$style.comment__text">
-      {{ card.card_explanation }}
-    </p>
+    <p
+      :class="$style.comment_text"
+    >{{ card.card_explanation }}</p>
     <img
       v-if="card.card_explanation_image"
       :src="imageUrl"
@@ -59,7 +59,7 @@ export default {
   align-items: center;
 }
 
-.answer__label {
+.answer_label {
   $height-pc: 40px;
   $height-tb: 35px;
   $height-sp: 30px;
@@ -90,13 +90,14 @@ export default {
   }
 }
 
-.answer__text {
+.answer_text {
   width: 100%;
   min-width: 0;
   margin-left: 10px;
   font-size: 16px;
   line-height: 1.5;
   font-weight: bold;
+  white-space: pre-wrap;
 
   @include mq(tb) {
     font-size: 15px;
@@ -134,7 +135,7 @@ export default {
   right: 0;
 }
 
-.comment__label {
+.comment_label {
   font-weight: 18px;
   font-weight: bold;
 
@@ -147,9 +148,10 @@ export default {
   }
 }
 
-.comment__text {
+.comment_text {
   margin-top: 10px;
   line-height: 1.5;
+  white-space: pre-wrap;
 }
 
 .image {

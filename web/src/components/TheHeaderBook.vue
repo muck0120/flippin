@@ -1,15 +1,11 @@
 <template>
   <div>
     <section :class="$style.wrap">
-      <h2 :class="$style.title">
-        {{ book.book_title }}
-      </h2>
+      <h2 :class="$style.title">{{ book.book_title }}</h2>
       <p
         v-if="book.book_desc && isDescription"
         :class="$style.desc"
-      >
-        {{ book.book_desc }}
-      </p>
+      >{{ book.book_desc }}</p>
       <div
         v-if="isFooter"
         :class="$style.footer"
@@ -132,6 +128,7 @@ export default {
   font-size: 20px;
   font-weight: bold;
   line-height: 1.2;
+  white-space: pre-wrap;
 
   @include mq(tb) {
     font-size: 17px;
@@ -146,6 +143,7 @@ export default {
   margin-top: 20px;
   font-size: 16px;
   line-height: 1.2;
+  white-space: pre-wrap;
 
   @include mq(tb) {
     margin-top: 15px;

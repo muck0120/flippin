@@ -50,9 +50,9 @@
         </div>
       </template>
     </div>
-    <p :class="$style.question">
-      {{ card.card_question }}
-    </p>
+    <p
+      :class="$style.question"
+    >{{ card.card_question }}</p>
     <img
       v-if="card.card_question_image"
       :src="imageUrl"
@@ -79,9 +79,9 @@
         "
         :class="$style.check"
       >
-      <p :class="$style.text">
-        {{ choice.card_choice_text }}
-      </p>
+      <p
+        :class="$style.text"
+      >{{ choice.card_choice_text }}</p>
     </label>
   </div>
 </template>
@@ -244,6 +244,7 @@ export default {
 .question {
   margin-top: 30px;
   line-height: 1.5;
+  white-space: pre-wrap;
 
   @include mq(tb) {
     margin-top: 25px;
@@ -323,6 +324,7 @@ export default {
   line-height: 1.5;
   padding-left: 40px;
   position: relative;
+  white-space: pre-wrap;
 
   @include mq(tb) {
     padding-left: 36px;
