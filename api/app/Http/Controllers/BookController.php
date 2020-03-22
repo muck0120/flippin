@@ -74,7 +74,7 @@ class BookController extends Controller
             });
         }
 
-        return response()->json($books->paginate(30), 200);
+        return response()->json($books->paginate(18), 200);
     }
 
     /**
