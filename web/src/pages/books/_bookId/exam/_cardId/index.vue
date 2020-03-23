@@ -1,5 +1,5 @@
 <template>
-  <div :calss="$style.wrap">
+  <div :class="$style.wrap">
     <HeaderBook
       :is-footer="false"
       :back-to="`/books/${book.book_id}/exam/cards`"
