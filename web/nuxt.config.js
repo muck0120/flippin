@@ -1,7 +1,6 @@
 require('dotenv').config()
 
 export default {
-  mode: 'universal',
   srcDir: 'src/',
   router: {
     middleware: ['user-agent']
