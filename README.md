@@ -11,7 +11,7 @@ WEB上で問題集を作成できるアプリケーションです。自分の�
 
 ## 🌐 アプリURL
 
-### **https://flippin.tokyo/**
+### **https://flippin.muck.jp/**
 <br>
 
 ## 📦 主要機能一覧
